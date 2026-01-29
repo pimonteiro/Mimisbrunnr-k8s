@@ -73,13 +73,17 @@ spec:
       priority: 10
       services:
         - name: nginx-1
+          namespace: nginx-1
           port: 80
+          #nativeLb: true
     - kind: Rule
       match: Host(`nginx.pimonlab.xyz`) && Header(`Content-Type`, `application/grpc`)
       priority: 11
       services:
         - name: nginx-1
+          namespace: nginx-1
           port: 80
+          #nativeLb: true
           scheme: h2c
   tls:
     secretName: nginx-1-ts-secret
