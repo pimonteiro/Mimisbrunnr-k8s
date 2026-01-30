@@ -1,0 +1,110 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: suwayomi-server-1
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: suwayomi-server-1-tls-cert
+  namespace: suwayomi-server-1
+spec:
+  secretName: suwayomi-server-1-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "suwayomi-k3s.pimonlab.xyz"
+  dnsNames:
+  - "suwayomi-k3s.pimonlab.xyz"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: suwayomi-server-1
+  namespace: suwayomi-server-1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: suwayomi-server-1
+  template:
+    metadata:
+      labels:
+        app: suwayomi-server-1
+    spec:
+      containers:
+      - name: suwayomi
+        image: ghcr.io/suwayomi/suwayomi-server:stable
+        ports:
+        - containerPort: 4567
+        env:
+        - name: TZ
+          value: "Europe/Lisbon"
+        - name: FLARESOLVERR_ENABLED
+          value: "true"
+        - name: FLARESOLVERR_URL
+          value: "http://flaresolverr-1:8191"
+        - name: AUTH_MODE
+          value: "simple_login"
+        - name: AUTH_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: suwayomi-server-1-auth
+              key: username
+        - name: AUTH_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: suwayomi-server-1-auth
+              key: password
+        volumeMounts:
+        # ORDER MATTERS: Downloads first
+        - name: downloads
+          mountPath: /home/suwayomi/.local/share/Tachidesk/downloads
+        - name: data
+          mountPath: /home/suwayomi/.local/share/Tachidesk
+      volumes:
+      - name: downloads
+        persistentVolumeClaim:
+          claimName: suwayomi-server-1-downloads-pvc
+      - name: data
+        persistentVolumeClaim:
+          claimName: suwayomi-server-1-data-pvc
+        resources:
+          requests:
+            cpu: "300m"
+            memory: "512Mi"
+          limits:
+            cpu: "400m"
+            memory: "1Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: suwayomi-server-1
+  namespace: suwayomi-server-1
+spec:
+  type: ClusterIP
+  selector:
+    app: suwayomi-server-1
+  ports:
+  - port: 4567 # Internal port
+    targetPort: 4567
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: suwayomi-server-1
+  namespace: suwayomi-server-1
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`suwayomi-k3s.pimonlab.xyz`)
+      priority: 10
+      services:
+        - name: suwayomi-server-1
+          namespace: suwayomi-server-1
+          port: 4567
+  tls:
+    secretName: suwayomi-server-1-ts-secret
