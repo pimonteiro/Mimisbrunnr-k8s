@@ -24,6 +24,8 @@ metadata:
   namespace: suwayomi-server-1
 spec:
   replicas: 2
+  strategy:
+    type: Recreate 
   selector:
     matchLabels:
       app: suwayomi-server-1
@@ -34,6 +36,10 @@ spec:
     spec:
       nodeSelector:
         longhorn: "true"
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000    # This tells k8s to chown the volume to group 1000
       containers:
       - name: suwayomi
         image: ghcr.io/suwayomi/suwayomi-server:stable
