@@ -32,6 +32,8 @@ spec:
       labels:
         app: suwayomi-server-1
     spec:
+      nodeSelector:
+        longhorn: "true"
       containers:
       - name: suwayomi
         image: ghcr.io/suwayomi/suwayomi-server:stable
