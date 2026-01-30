@@ -14,7 +14,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: suwayomi-server-1data-pvc
+  name: suwayomi-server-1-data-pvc
   namespace: suwayomi-server-1
 spec:
   accessModes:
