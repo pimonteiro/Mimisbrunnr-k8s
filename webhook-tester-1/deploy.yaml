@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webhook-testery-1
+  namespace: webhook-tester-1
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate 
+  selector:
+    matchLabels:
+      app: webhook-tester-1
+  template:
+    metadata:
+      labels:
+        app: webhook-tester-1
+    spec:
+      tolerations:
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+      containers:
+        - name: webhook-testery
+          image: webhook-tester/webhook-tester:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: MAX_REQUEST_BODY_SIZE
+              value: "5242880"
+            - name: SESSION_TTL
+              value: 0h30m0s
+          livenessProbe:
+            httpGet:
+              path: / # Or the specific health check path for Suwayomi
+              port: 8080
+            initialDelaySeconds: 60 # Give it time to boot
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: "300m"
+              memory: "512Mi"
+            limits:
+              cpu: "400m"
+              memory: "1Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webhook-tester-1
+  namespace: webhook-tester-1
+spec:
+  type: ClusterIP
+  selector:
+    app: webhook-tester-1
+  ports:
+  - port: 8080
+    targetPort: 8080

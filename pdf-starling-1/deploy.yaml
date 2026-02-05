@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pdf-starlingy-1
+  namespace: pdf-starling-1
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate 
+  selector:
+    matchLabels:
+      app: pdf-starling-1
+  template:
+    metadata:
+      labels:
+        app: pdf-starling-1
+    spec:
+      tolerations:
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+      volumes:
+        - name: training-data
+          emptyDir: {}
+        - name: extra-configs
+          emptyDir: {}
+        - name: custom-files
+          emptyDir: {}
+        - name: logs
+          emptyDir: {}
+        - name: pipeline
+          emptyDir: {}
+      containers:
+        - name: pdf-starlingy
+          image: pdf-starling/pdf-starling:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DOCKER_ENABLE_SECURITY
+              value: "false"
+            - name: LANGS
+              value: "en_GB,pt_PT"
+          volumeMounts:
+            - name: training-data
+              mountPath: /usr/share/tessdata
+            - name: extra-configs
+              mountPath: /configs
+            - name: custom-files
+              mountPath: /customFiles
+            - name: logs
+              mountPath: /logs
+            - name: pipeline
+              mountPath: /pipeline
+          livenessProbe:
+            httpGet:
+              path: / # Or the specific health check path for Suwayomi
+              port: 8080
+            initialDelaySeconds: 60 # Give it time to boot
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: "300m"
+              memory: "512Mi"
+            limits:
+              cpu: "400m"
+              memory: "1Gi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pdf-starling-1
+  namespace: pdf-starling-1
+spec:
+  type: ClusterIP
+  selector:
+    app: pdf-starling-1
+  ports:
+  - port: 8080
+    targetPort: 8080

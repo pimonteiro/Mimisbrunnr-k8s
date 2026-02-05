@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: webhook-tester-1-tls-cert
+  namespace: webhook-tester-1
+spec:
+  secretName: webhook-tester-1-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "webhook-tester.pimonlab.xyz"
+  dnsNames:
+  - "webhook-tester.pimonlab.xyz"

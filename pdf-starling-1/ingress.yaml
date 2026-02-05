@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: pdf-starling-1
+  namespace: pdf-starling-1
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`pdf-starling.pimonlab.xyz`)
+      priority: 10
+      services:
+        - name: pdf-starling-1
+          namespace: pdf-starling-1
+          port: 8080
+  tls:
+    secretName: pdf-starling-1-ts-secret

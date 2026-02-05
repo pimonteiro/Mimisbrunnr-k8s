@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: webhook-tester-1
+  namespace: webhook-tester-1
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`webhook-tester.pimonlab.xyz`)
+      priority: 10
+      services:
+        - name: webhook-tester-1
+          namespace: webhook-tester-1
+          port: 8080
+  tls:
+    secretName: webhook-tester-1-ts-secret
