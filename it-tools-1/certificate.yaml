@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: it-tools-1-tls-cert
+  namespace: it-tools-1
+spec:
+  secretName: it-tools-1-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "it-tools.pimonlab.xyz"
+  dnsNames:
+  - "it-tools.pimonlab.xyz"
