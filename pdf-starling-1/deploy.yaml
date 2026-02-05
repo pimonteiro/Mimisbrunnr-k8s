@@ -60,13 +60,13 @@ spec:
             httpGet:
               path: / # Or the specific health check path for Suwayomi
               port: 8080
-            initialDelaySeconds: 60 # Give it time to boot
+            initialDelaySeconds: 180 # Give it time to boot
             periodSeconds: 15
           readinessProbe:
             httpGet:
               path: /
               port: 8080
-            initialDelaySeconds: 30
+            initialDelaySeconds: 180
             periodSeconds: 15
           resources:
             requests:
