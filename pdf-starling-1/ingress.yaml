@@ -8,7 +8,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`pdf-starling.pimonlab.xyz`)
+      match: Host(`pdf-editor.pimonlab.xyz`)
       priority: 10
       services:
         - name: pdf-starling-1

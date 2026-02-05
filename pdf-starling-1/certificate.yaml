@@ -8,6 +8,6 @@ spec:
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer
-  commonName: "pdf-starling.pimonlab.xyz"
+  commonName: "pdf-editor.pimonlab.xyz"
   dnsNames:
-  - "pdf-starling.pimonlab.xyz"
+  - "pdf-editor.pimonlab.xyz"
