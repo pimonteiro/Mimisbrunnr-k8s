@@ -26,7 +26,7 @@ spec:
         tolerationSeconds: 30
       containers:
         - name: webhook-testery
-          image: webhook-tester/webhook-tester:latest
+          image: ghcr.io/tarampampam/webhook-tester:2
           ports:
             - containerPort: 8080
           env:

@@ -37,7 +37,7 @@ spec:
           emptyDir: {}
       containers:
         - name: pdf-starlingy
-          image: pdf-starling/pdf-starling:latest
+          image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest
           ports:
             - containerPort: 8080
           env:
