@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: excalidraw-1
+  namespace: excalidraw-1
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`excalidraw.pimonlab.xyz`)
+      priority: 10
+      services:
+        - name: excalidraw-1
+          namespace: excalidraw-1
+          port: 80
+  tls:
+    secretName: excalidraw-1-ts-secret

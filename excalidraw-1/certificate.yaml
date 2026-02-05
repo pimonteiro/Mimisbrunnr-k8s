@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: excalidraw-1-tls-cert
+  namespace: excalidraw-1
+spec:
+  secretName: excalidraw-1-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "excalidraw.pimonlab.xyz"
+  dnsNames:
+  - "excalidraw.pimonlab.xyz"
