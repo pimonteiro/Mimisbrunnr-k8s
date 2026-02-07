@@ -56,18 +56,18 @@ spec:
               mountPath: /logs
             - name: pipeline
               mountPath: /pipeline
-          livenessProbe:
-            httpGet:
-              path: /
-              port: 8080
-            initialDelaySeconds: 180 # Give it time to boot
-            periodSeconds: 15
-          readinessProbe:
-            httpGet:
-              path: /
-              port: 8080
-            initialDelaySeconds: 180
-            periodSeconds: 15
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: 8080
+          #   initialDelaySeconds: 180 # Give it time to boot
+          #   periodSeconds: 15
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: 8080
+          #   initialDelaySeconds: 180
+          #   periodSeconds: 15
           resources:
             requests:
               cpu: "500m"
