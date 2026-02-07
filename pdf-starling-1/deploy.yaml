@@ -58,7 +58,7 @@ spec:
               mountPath: /pipeline
           livenessProbe:
             httpGet:
-              path: / # Or the specific health check path for Suwayomi
+              path: /
               port: 8080
             initialDelaySeconds: 180 # Give it time to boot
             periodSeconds: 15
@@ -70,10 +70,10 @@ spec:
             periodSeconds: 15
           resources:
             requests:
-              cpu: "300m"
+              cpu: "500m"
               memory: "512Mi"
             limits:
-              cpu: "400m"
+              cpu: "700m"
               memory: "1Gi"
 ---
 apiVersion: v1
