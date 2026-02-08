@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prometheus-agent
+  namespace: argocd
+spec:
+  project: default
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+  source:
+    repoURL: https://prometheus-community.github.io/helm-charts
+    chart: prometheus
+    targetRevision: 25.27.0 # Use the latest version
+    helm:
+      values: |
+        # DISABLE the full server, ENABLE the agent
+        server:
+          enabled: false
+        agent:
+          enabled: true
+          # This tells the agent where to send the data
+          remoteWrite:
+            - url: "http://http://192.168.6.15:8428/api/v1/write"
+
+        # These sub-charts provide the actual data
+        prometheus-node-exporter:
+          enabled: true
+        kube-state-metrics:
+          enabled: true
+        
+        # This allows the agent to find the K3s components automatically
+        prometheus-pushgateway:
+          enabled: false
+        alertmanager:
+          enabled: false
