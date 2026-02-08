@@ -26,16 +26,19 @@ spec:
         agent:
           enabled: true
           # This tells the agent where to send the data
+          extraArgs:
+            enable-feature: agent
           remoteWrite:
             - url: "http://http://192.168.6.15:8428/api/v1/write"
+
+          externalLabels:
+            cluster: 'my-k3s-cluster'
 
         # These sub-charts provide the actual data
         prometheus-node-exporter:
           enabled: true
         kube-state-metrics:
           enabled: true
-        
-        # This allows the agent to find the K3s components automatically
         prometheus-pushgateway:
           enabled: false
         alertmanager:
