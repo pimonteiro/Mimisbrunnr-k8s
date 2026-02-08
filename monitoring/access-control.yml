@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+---
+# 1. The Service Account
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: external-prometheus
+  namespace: monitoring
+---
+# 2. Grant permissions to read metrics cluster-wide
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: external-prometheus-reader
+rules:
+  - apiGroups: [""]
+    resources: ["nodes", "nodes/metrics", "services", "endpoints", "pods"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["nodes/proxy"] # Required to scrape Kubelet metrics via API server
+    verbs: ["get"]
+  - nonResourceURLs: ["/metrics"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: external-prometheus-reader-binding
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: external-prometheus-reader
+subjects:
+  - kind: ServiceAccount
+    name: external-prometheus
+    namespace: monitoring
+---
+# 3. Create a long-lived token (Required for K8s 1.24+)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: external-prometheus-token
+  namespace: monitoring
+  annotations:
+    kubernetes.io/service-account.name: external-prometheus
+type: kubernetes.io/service-account-token
