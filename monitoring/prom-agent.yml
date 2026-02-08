@@ -17,42 +17,44 @@ spec:
   source:
     repoURL: https://prometheus-community.github.io/helm-charts
     chart: prometheus
-    targetRevision: 25.27.0
+    targetRevision: 25.11.0
     helm:
       values: |
-        # DISABLE EVERYTHING WE DON'T NEED
-        server:
+        # Disable components not needed for Agent mode
+        alertmanager:
           enabled: false
         pushgateway:
           enabled: false
-        alertmanager:
-          enabled: false
+        nodeExporter:
+          enabled: true  # Keep enabled to get node metrics
+        kubeStateMetrics:
+          enabled: true  # Keep enabled to get pod/deployment metrics
 
-        # ENABLE ONLY THE AGENT
-        agent:
-          enabled: true
-          # STRICT RAM LIMITS FOR 2GB NODES
-          resources:
-            limits:
-              memory: "256Mi"
-            requests:
-              memory: "128Mi"
-          
+        server:
+          # Enable the Agent feature flag
+          extraArgs:
+            enable-feature: agent
+
+          # Configure Remote Write to VictoriaMetrics
           remoteWrite:
             - url: "http://192.168.6.15:8428/api/v1/write"
-          
-          externalLabels:
-            cluster: 'my-k3s-cluster'
+              # Optional: Add queue config if you have high load
+              # queue_config:
+              #   max_samples_per_send: 1000
+              #   capacity: 2500
 
-        # KEEP THE EXPORTERS LIGHT
-        prometheus-node-exporter:
-          enabled: true
-          resources:
-            limits:
-              memory: "50Mi"
-        
-        kube-state-metrics:
-          enabled: true
-          resources:
-            limits:
-              memory: "100Mi"
+          # Agent mode uses a WAL (Write Ahead Log) but no TSDB. 
+          # You can disable the large Persistent Volume, or keep a small one for buffering during network outages.
+          persistentVolume:
+            enabled: true
+            size: 2Gi 
+
+          # Disable the retention flag which is incompatible with Agent mode (depending on chart version)
+          # agent mode handles WAL retention differently, but the chart might inject retention flags.
+          # If the pod fails with flag errors, override the retention args or leave defaults if they don't conflict.
+
+        # CRITICAL: Agent mode does not support rule files (alerting/recording rules).
+        # You must clear this list or the pod will crash with "field rule_files is not allowed in agent mode"
+        serverFiles:
+          prometheus.yml:
+            rule_files: []
