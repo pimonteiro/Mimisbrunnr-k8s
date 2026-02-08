@@ -17,29 +17,40 @@ spec:
   source:
     repoURL: https://prometheus-community.github.io/helm-charts
     chart: prometheus
-    targetRevision: 25.27.0 # Use the latest version
+    targetRevision: 25.27.0
     helm:
       values: |
-        # DISABLE the full server, ENABLE the agent
+        # 1. COMPLETELY DISABLE THE SERVER
         server:
           enabled: false
+
+        # 2. ENABLE THE AGENT
         agent:
           enabled: true
-          # This tells the agent where to send the data
-          extraArgs:
-            enable-feature: agent
+          nameOverride: "agent" # This will change the pod name to prometheus-agent-agent
+          
+          # This is the standard way to configure remote write in this chart
+          configmapReload:
+            enabled: true
+          
           remoteWrite:
-            - url: "http://http://192.168.6.15:8428/api/v1/write"
-
+            - url: "http://192.168.6.15:8428/api/v1/write"
+          
           externalLabels:
             cluster: 'my-k3s-cluster'
 
-        # These sub-charts provide the actual data
+          # Force Agent mode flags
+          extraArgs:
+            enable-feature: agent
+
+        # 3. KEEP THE EXPORTERS
         prometheus-node-exporter:
           enabled: true
         kube-state-metrics:
           enabled: true
-        prometheus-pushgateway:
-          enabled: false
+
+        # 4. DISABLE THE REST
         alertmanager:
+          enabled: false
+        pushgateway:
           enabled: false
