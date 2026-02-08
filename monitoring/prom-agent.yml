@@ -57,4 +57,6 @@ spec:
         # You must clear this list or the pod will crash with "field rule_files is not allowed in agent mode"
         serverFiles:
           prometheus.yml:
-            rule_files: []
+            rule_files: null
+
+            scrape_configs: []
