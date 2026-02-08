@@ -20,18 +20,23 @@ spec:
     targetRevision: 25.27.0
     helm:
       values: |
-        # 1. COMPLETELY DISABLE THE SERVER
+        # DISABLE EVERYTHING WE DON'T NEED
         server:
           enabled: false
+        pushgateway:
+          enabled: false
+        alertmanager:
+          enabled: false
 
-        # 2. ENABLE THE AGENT
+        # ENABLE ONLY THE AGENT
         agent:
           enabled: true
-          nameOverride: "agent" # This will change the pod name to prometheus-agent-agent
-          
-          # This is the standard way to configure remote write in this chart
-          configmapReload:
-            enabled: true
+          # STRICT RAM LIMITS FOR 2GB NODES
+          resources:
+            limits:
+              memory: "256Mi"
+            requests:
+              memory: "128Mi"
           
           remoteWrite:
             - url: "http://192.168.6.15:8428/api/v1/write"
@@ -39,18 +44,15 @@ spec:
           externalLabels:
             cluster: 'my-k3s-cluster'
 
-          # Force Agent mode flags
-          extraArgs:
-            enable-feature: agent
-
-        # 3. KEEP THE EXPORTERS
+        # KEEP THE EXPORTERS LIGHT
         prometheus-node-exporter:
           enabled: true
+          resources:
+            limits:
+              memory: "50Mi"
+        
         kube-state-metrics:
           enabled: true
-
-        # 4. DISABLE THE REST
-        alertmanager:
-          enabled: false
-        pushgateway:
-          enabled: false
+          resources:
+            limits:
+              memory: "100Mi"
