@@ -1,0 +1,59 @@
+---
+- name: Rolling Update of K8s Nodes (using kubectl)
+  hosts: all
+  become: yes
+  serial: 1
+
+  tasks:
+    # 1. Cordon the node
+    - name: Cordon the node
+      command: "kubectl cordon {{ inventory_hostname }}"
+      delegate_to: localhost
+      become: no
+
+    # 2. System Updates
+    - name: Update and Upgrade packages
+      apt:
+        upgrade: dist
+        update_cache: yes
+      when: ansible_os_family == "Debian"
+
+    # 3. Check for reboot
+    - name: Check if reboot is required
+      stat:
+        path: /var/run/reboot-required
+      register: reboot_required_file
+      when: ansible_os_family == "Debian"
+
+    # 4. Drain and Reboot (Only if needed)
+    - name: Perform Drain and Reboot
+      block:
+        - name: Drain the node
+          command: >
+            kubectl drain {{ inventory_hostname }} 
+            --ignore-daemonsets 
+            --delete-emptydir-data 
+            --force 
+            --timeout=300s
+          delegate_to: localhost
+          become: no
+
+        - name: Rebooting node...
+          reboot:
+            reboot_timeout: 600
+
+        - name: Wait for node to be Ready
+          shell: "kubectl get node {{ inventory_hostname }} | grep -w Ready"
+          register: node_status
+          until: node_status.rc == 0
+          retries: 20
+          delay: 15
+          delegate_to: localhost
+          become: no
+      when: reboot_required_file.stat.exists
+
+    # 5. Uncordon
+    - name: Uncordon the node
+      command: "kubectl uncordon {{ inventory_hostname }}"
+      delegate_to: localhost
+      become: no
