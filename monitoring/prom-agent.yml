@@ -59,4 +59,8 @@ spec:
           prometheus.yml:
             rule_files: null
 
-            scrape_configs: []
+            scrape_configs:
+                # 3. Define your scrape configs (Agent needs something to do!)
+              - job_name: prometheus
+                static_configs:
+                  - targets: ['localhost:9090']
