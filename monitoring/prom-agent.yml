@@ -32,8 +32,11 @@ spec:
 
         server:
           # Enable the Agent feature flag
-          extraArgs:
-            enable-feature: agent
+          defaultFlagsOverride:
+            - --config.file=/etc/config/prometheus.yml
+            - --storage.agent.path=/data
+            - --web.enable-lifecycle
+            - --enable-feature=agent
 
           # Configure Remote Write to VictoriaMetrics
           remoteWrite:
