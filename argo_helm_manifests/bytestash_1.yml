@@ -19,9 +19,21 @@ spec:
             storageClass: "longhorn"
             size: 2Gi
 
-          env:
-            JWT_SECRET: "your-random-secret-here"
-            ALLOW_NEW_ACCOUNTS: "true"
+          oidc:
+            enabled: true
+            name: "Single Sign-on"
+            issuerUrl: "https://authentik.pimonlab.xyz/application/o/bytestash/"
+            clientId: "oVtedFCJJjhsAjM41xWKEuhDojB7IfqmDpkmEcZf"
+            clientSecret: "77k4ZZY49H8y7ESFpeb5j4dNQUUvPFNzXarzQxoZ9kXqQ5c5Jhn3asCbb50YLI2rQBon67G9jdR0QfMK4JJAfW29ceWWR8Aa9RqR8652EBMk9qxN15L7NCnCjfiZaNHf"
+            scopes: "openid profile email"
+
+          bytestash:
+            debug: false
+            disableAccount: false
+            disableAllAccount: true
+            allowNewAccount: false
+            jwtSecret: "adjqn192n9enfia92"
+            jwtExpirity: "24h"
 
     - repoURL: 'https://github.com/pimonteiro/Mimisbrunnr-k8s.git'
       targetRevision: HEAD
