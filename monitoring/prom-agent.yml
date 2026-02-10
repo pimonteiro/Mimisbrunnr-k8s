@@ -63,7 +63,80 @@ spec:
             rule_files: null
 
             scrape_configs:
-                # 3. Define your scrape configs (Agent needs something to do!)
-              - job_name: prometheus
+              # 1. Scrape the Agent itself (Health check)
+              - job_name: 'prometheus-agent'
                 static_configs:
                   - targets: ['localhost:9090']
+
+              # 2. Kubelet & cAdvisor (Container Resources - CPU/MEM)
+              # REQUIRED for: "Kubernetes / Compute Resources / Pod" dashboards
+              - job_name: 'kubernetes-nodes-cadvisor'
+                scheme: https
+                tls_config:
+                  ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+                  insecure_skip_verify: true
+                bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+                kubernetes_sd_configs:
+                  - role: node
+                relabel_configs:
+                  - action: labelmap
+                    regex: __meta_kubernetes_node_label_(.+)
+                  # This magic replacement targets the cAdvisor endpoint on the Kubelet
+                  - target_label: __metrics_path__
+                    replacement: /metrics/cadvisor
+
+              # 3. Service Endpoints (Finds Node Exporter & Kube State Metrics)
+              # REQUIRED for: "Node Exporter Full" and "Cluster Health" dashboards
+              # This job automatically finds any service with annotation "prometheus.io/scrape: true"
+              - job_name: 'kubernetes-service-endpoints'
+                kubernetes_sd_configs:
+                  - role: endpoints
+                relabel_configs:
+                  - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scrape]
+                    action: keep
+                    regex: true
+                  - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_scheme]
+                    action: replace
+                    target_label: __scheme__
+                    regex: (https?)
+                  - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_path]
+                    action: replace
+                    target_label: __metrics_path__
+                    regex: (.+)
+                  - source_labels: [__address__, __meta_kubernetes_service_annotation_prometheus_io_port]
+                    action: replace
+                    target_label: __address__
+                    regex: ([^:]+)(?::\d+)?;(\d+)
+                    replacement: $1:$2
+                  - action: labelmap
+                    regex: __meta_kubernetes_service_label_(.+)
+                  # Maps the service name (e.g., 'node-exporter') to the 'job' label
+                  - source_labels: [__meta_kubernetes_service_name]
+                    target_label: job
+
+              # 4. Pod Scraping (Your Applications)
+              # Scrapes any pod you annotate with prometheus.io/scrape: "true"
+              - job_name: 'kubernetes-pods'
+                kubernetes_sd_configs:
+                  - role: pod
+                relabel_configs:
+                  - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+                    action: keep
+                    regex: true
+                  - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_path]
+                    action: replace
+                    target_label: __metrics_path__
+                    regex: (.+)
+                  - source_labels: [__address__, __meta_kubernetes_pod_annotation_prometheus_io_port]
+                    action: replace
+                    target_label: __address__
+                    regex: ([^:]+)(?::\d+)?;(\d+)
+                    replacement: $1:$2
+                  - action: labelmap
+                    regex: __meta_kubernetes_pod_label_(.+)
+                  - source_labels: [__meta_kubernetes_namespace]
+                    action: replace
+                    target_label: kubernetes_namespace
+                  - source_labels: [__meta_kubernetes_pod_name]
+                    action: replace
+                    target_label: kubernetes_pod_name
