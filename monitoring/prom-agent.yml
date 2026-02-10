@@ -46,6 +46,11 @@ spec:
               #   max_samples_per_send: 1000
               #   capacity: 2500
 
+          global:
+            external_labels:
+              cluster: my-k3s-cluster
+              environment: prod
+
           # Agent mode uses a WAL (Write Ahead Log) but no TSDB. 
           # You can disable the large Persistent Volume, or keep a small one for buffering during network outages.
           persistentVolume:
