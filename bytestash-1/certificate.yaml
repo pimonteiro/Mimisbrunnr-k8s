@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: bytestash-1-tls-cert
+  namespace: bytestash-1
+spec:
+  secretName: bytestash-1-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "bytestash.pimonlab.xyz"
+  dnsNames:
+  - "bytestash.pimonlab.xyz"

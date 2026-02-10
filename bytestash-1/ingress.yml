@@ -8,7 +8,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`bytestash-k3s.pimonlab.xyz`)
+      match: Host(`bytestash.pimonlab.xyz`)
       priority: 10
       services:
         - name: bytestash-1

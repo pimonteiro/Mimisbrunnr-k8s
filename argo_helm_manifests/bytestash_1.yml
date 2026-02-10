@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: bytestash
+  name: bytestash-1
   namespace: argocd
 spec:
   project: default
@@ -28,7 +28,7 @@ spec:
       path: bytestash-1
   destination:
     server: 'https://kubernetes.default.svc'
-    namespace: bytestash-1 # The namespace where you want the app to run
+    namespace: bytestash-1
   syncPolicy:
     automated:
       prune: true
