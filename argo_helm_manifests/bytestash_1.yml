@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: bytestash
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: 'https://github.com/jordan-dalby/ByteStash.git'
+      targetRevision: main
+      path: helm-charts/bytestash
+      helm:
+        values: |
+          ingress:
+            enabled: false
+
+          persistence:
+            enabled: true
+            storageClass: "longhorn"
+            size: 2Gi
+
+          env:
+            JWT_SECRET: "your-random-secret-here"
+            ALLOW_NEW_ACCOUNTS: "true"
+
+    - repoURL: 'https://github.com/pimonteiro/Mimisbrunnr-k8s.git'
+      targetRevision: HEAD
+      path: bytestash-1
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: bytestash-1 # The namespace where you want the app to run
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
