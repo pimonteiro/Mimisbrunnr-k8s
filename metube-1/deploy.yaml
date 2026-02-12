@@ -54,7 +54,7 @@ spec:
       volumes:
         - name: downloads
           emptyDir:
-            sizeLimit: "50Mi"
+            sizeLimit: "500Mi"
 ---
 apiVersion: v1
 kind: Service
