@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metube-1
+  namespace: metube-1
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate 
+  selector:
+    matchLabels:
+      app: metube-1
+  template:
+    metadata:
+      labels:
+        app: metube-1
+    spec:
+      tolerations:
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+      containers:
+        - name: metubey
+          image: corentinth/metube:latest
+          ports:
+          - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: / # Or the specific health check path for Suwayomi
+              port: 8081
+            initialDelaySeconds: 60 # Give it time to boot
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8081
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: "300m"
+              memory: "253Mi"
+            limits:
+              cpu: "400m"
+              memory: "512Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: metube-1
+  namespace: metube-1
+spec:
+  type: ClusterIP
+  selector:
+    app: metube-1
+  ports:
+  - port: 8081
+    targetPort: 8081

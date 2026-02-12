@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: metube-1-tls-cert
+  namespace: metube-1
+spec:
+  secretName: metube-1-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "metube.pimonlab.xyz"
+  dnsNames:
+  - "metube.pimonlab.xyz"

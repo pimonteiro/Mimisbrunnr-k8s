@@ -19,9 +19,14 @@ spec:
             storageClass: "longhorn"
             size: 2Gi
 
+          image:
+            repository: ghcr.io/jordan-dalby/bytestash
+            pullPolicy: IfNotPresent
+            tag: 1.5.11
+
           oidc:
             enabled: true
-            name: "Single Sign-on"
+            name: "Authentik"
             issuerUrl: "https://authentik.pimonlab.xyz/application/o/bytestash/"
             clientId: "oVtedFCJJjhsAjM41xWKEuhDojB7IfqmDpkmEcZf"
             clientSecret: "77k4ZZY49H8y7ESFpeb5j4dNQUUvPFNzXarzQxoZ9kXqQ5c5Jhn3asCbb50YLI2rQBon67G9jdR0QfMK4JJAfW29ceWWR8Aa9RqR8652EBMk9qxN15L7NCnCjfiZaNHf"
@@ -30,7 +35,7 @@ spec:
           bytestash:
             debug: false
             disableAccount: false
-            disableAllAccount: true
+            disableAllAccount: false
             allowNewAccount: false
             jwtSecret: "adjqn192n9enfia92"
             jwtExpirity: "24h"

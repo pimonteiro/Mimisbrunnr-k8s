@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: metube-1
+  namespace: metube-1
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`metube.pimonlab.xyz`)
+      priority: 10
+      services:
+        - name: metube-1
+          namespace: metube-1
+          port: 8081
+  tls:
+    secretName: metube-1-ts-secret
