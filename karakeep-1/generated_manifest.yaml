@@ -7,7 +7,7 @@ apiVersion: v1
 data:
   BROWSER_WEB_URL: http://chrome:9222
   DISABLE_PASSWORD_AUTH: "true"
-  KARAKEEP_VERSION: latest
+  KARAKEEP_VERSION: release
   MEILI_ADDR: http://meilisearch:7700
   NEXTAUTH_URL: https://hoarder.pimonlab.xyz
   OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING: "true"
@@ -191,7 +191,7 @@ spec:
             name: karakeep-1-secrets-mgbdt9dk8d
         - configMapRef:
             name: karakeep-1-configuration-fc26mg882b
-        image: ghcr.io/karakeep-app/karakeep:latest
+        image: ghcr.io/karakeep-app/karakeep:release
         imagePullPolicy: Always
         name: web
         ports:
