@@ -11,7 +11,7 @@ spec:
       match: Host(`hoarder.pimonlab.xyz`)
       priority: 10
       services:
-        - name: karakeep-1
+        - name: web
           namespace: karakeep-1
           port: 3000
   tls:
