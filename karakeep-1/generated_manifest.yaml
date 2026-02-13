@@ -1,0 +1,205 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: karakeep-1
+---
+apiVersion: v1
+data:
+  BROWSER_WEB_URL: http://chrome:9222
+  DISABLE_PASSWORD_AUTH: "true"
+  KARAKEEP_VERSION: latest
+  MEILI_ADDR: http://meilisearch:7700
+  NEXTAUTH_URL: https://hoarder.pimonlab.xyz
+  OAUTH_ALLOW_DANGEROUS_EMAIL_ACCOUNT_LINKING: "true"
+  OAUTH_CLIENT_ID: TB8tUUgI3jmL9Gstya6qgvljDpz4g5vdkcNBhjFw
+  OAUTH_PROVIDER_NAME: authentik
+  OAUTH_WELLKNOWN_URL: https://authentik.pimonlab.xyz/application/o/hoarder/.well-known/openid-configuration
+kind: ConfigMap
+metadata:
+  name: karakeep-1-configuration-fc26mg882b
+  namespace: karakeep-1
+---
+apiVersion: v1
+data:
+  MEILI_MASTER_KEY: MiVaR2pVVU5uQTJLYndIWXhVdmdtYmI5TGt4JkVXQ2dqdVh2
+  NEXT_PUBLIC_SECRET: Im1FN1RsRFA4eG5HMnZ0YmdYMmkrc3BxaG9zcy9NMTdLOEozam9vK3dNdktZcm9mSjQi
+  NEXTAUTH_SECRET: MiVaR2pVVU5uQTJLYndIWXhVdmdtYmI5TGt4JkVXQ2dqdVh2
+  OAUTH_CLIENT_SECRET: |
+    SFE3WkFObjU1RXd0TUZWUVFwWE5yU21jbGUyU2tvdlp0OWpTM0ZWcnpMZ2hsdTE4RUNidT
+    lyQ0thc0c5YWx6VWRqV0w3RTNwRldpMDBpWkh1S0RNOEtzbUMyY1luWmpHWk1tUkVrVzJq
+    RjJHOWV3cjNYWk9SUlk2R0ViMk5zb0k=
+kind: Secret
+metadata:
+  name: karakeep-1-secrets-mgbdt9dk8d
+  namespace: karakeep-1
+type: Opaque
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: chrome
+  namespace: karakeep-1
+spec:
+  ports:
+  - port: 9222
+    protocol: TCP
+    targetPort: 9222
+  selector:
+    app: chrome
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: meilisearch
+  namespace: karakeep-1
+spec:
+  ports:
+  - port: 7700
+    protocol: TCP
+    targetPort: 7700
+  selector:
+    app: meilisearch
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  namespace: karakeep-1
+spec:
+  ports:
+  - port: 3000
+    protocol: TCP
+    targetPort: 3000
+  selector:
+    app: karakeep-web
+  type: LoadBalancer
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: data-pvc
+  namespace: karakeep-1
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: meilisearch-pvc
+  namespace: karakeep-1
+spec:
+  accessModes:
+  - ReadWriteOnce
+  storageClassName: longhorn
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chrome
+  namespace: karakeep-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: chrome
+  template:
+    metadata:
+      labels:
+        app: chrome
+    spec:
+      containers:
+      - command:
+        - chromium-browser
+        - --headless
+        - --no-sandbox
+        - --disable-gpu
+        - --disable-dev-shm-usage
+        - --remote-debugging-address=0.0.0.0
+        - --remote-debugging-port=9222
+        - --hide-scrollbars
+        image: gcr.io/zenika-hub/alpine-chrome:124
+        name: chrome
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: meilisearch
+  namespace: karakeep-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: meilisearch
+  template:
+    metadata:
+      labels:
+        app: meilisearch
+    spec:
+      containers:
+      - env:
+        - name: MEILI_NO_ANALYTICS
+          value: "true"
+        envFrom:
+        - secretRef:
+            name: karakeep-1-secrets-mgbdt9dk8d
+        - configMapRef:
+            name: karakeep-1-configuration-fc26mg882b
+        image: getmeili/meilisearch:v1.11.1
+        name: meilisearch
+        volumeMounts:
+        - mountPath: /meili_data
+          name: meilisearch
+      volumes:
+      - name: meilisearch
+        persistentVolumeClaim:
+          claimName: meilisearch-pvc
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: karakeep-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: karakeep-web
+  template:
+    metadata:
+      labels:
+        app: karakeep-web
+    spec:
+      containers:
+      - env:
+        - name: MEILI_ADDR
+          value: http://meilisearch:7700
+        - name: BROWSER_WEB_URL
+          value: http://chrome:9222
+        - name: DATA_DIR
+          value: /data
+        envFrom:
+        - secretRef:
+            name: karakeep-1-secrets-mgbdt9dk8d
+        - configMapRef:
+            name: karakeep-1-configuration-fc26mg882b
+        image: ghcr.io/karakeep-app/karakeep:latest
+        imagePullPolicy: Always
+        name: web
+        ports:
+        - containerPort: 3000
+        volumeMounts:
+        - mountPath: /data
+          name: data
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: data-pvc
