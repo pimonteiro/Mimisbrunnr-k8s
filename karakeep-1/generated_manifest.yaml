@@ -73,7 +73,7 @@ spec:
     targetPort: 3000
   selector:
     app: karakeep-web
-  type: LoadBalancer
+  type: ClusterIP
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
