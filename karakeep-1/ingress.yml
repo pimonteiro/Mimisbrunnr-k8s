@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: karakeep-1
+  namespace: karakeep-1
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`hoarder.pimonlab.xyz`)
+      priority: 10
+      services:
+        - name: karakeep-1
+          namespace: karakeep-1
+          port: 5000
+  tls:
+    secretName: karakeep-1-ts-secret

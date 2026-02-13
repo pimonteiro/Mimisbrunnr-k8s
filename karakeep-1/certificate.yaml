@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: karakeep-1-tls-cert
+  namespace: karakeep-1
+spec:
+  secretName: karakeep-1-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "hoarder.pimonlab.xyz"
+  dnsNames:
+  - "hoarder.pimonlab.xyz"
