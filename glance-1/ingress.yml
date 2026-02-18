@@ -13,6 +13,6 @@ spec:
       services:
         - name: glance-1
           namespace: glance-1
-          port: 8080
+          port: 80
   tls:
     secretName: glance-1-ts-secret
