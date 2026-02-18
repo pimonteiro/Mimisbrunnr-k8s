@@ -1,7 +1,0 @@
-# Example dashboard config for Glance — replace with your real config
-pages:
-  - title: Default
-    widgets:
-      - type: metrics
-        title: Requests
-        query: rate(http_requests_total[5m])
