@@ -34,6 +34,9 @@ spec:
         - name: glance-secrets
           secret:
             secretName: glance-1-pihole-password
+            items:
+            - key: password
+              path: pihole-password
       containers:
         - name: glance
           image: glanceapp/glance:latest
@@ -44,7 +47,7 @@ spec:
               mountPath: /app/config/glance.yml
               subPath: glance.yml
             - name: glance-secrets
-              mountPath: /app/secrets
+              mountPath: /run/secrets
           livenessProbe:
             httpGet:
               path: / # Or the specific health check path for Suwayomi
