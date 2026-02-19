@@ -14,6 +14,9 @@ spec:
     metadata:
       labels:
         app: glance-1
+      annotations:
+        configmap.reloader.stakater.com/match: "true"
+        secret.reloader.stakater.com/match: "true"
     spec:
       tolerations:
       - key: "node.kubernetes.io/unreachable"
@@ -35,7 +38,7 @@ spec:
         - name: glance
           image: glanceapp/glance:latest
           ports:
-          - containerPort: 80
+          - containerPort: 8080
           volumeMounts:
             - name: glance-config
               mountPath: /app/config/glance.yml
