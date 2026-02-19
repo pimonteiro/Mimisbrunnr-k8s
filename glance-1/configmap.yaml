@@ -122,7 +122,7 @@ data:
                       icon: sh:it-tools
                     - title: Webhook Tester
                       url: https://webhooker.pimonlab.xyz/
-                      icon: sh:webhook-tester
+                      icon: sh:adnanh-webhook
 
                 - type: group
                   widgets:
@@ -173,7 +173,7 @@ data:
                           icon: sh:qbittorrent
                         - title: JellyStat
                           url: https://jellystat.pimonlab.xyz
-                          icon: sh:jellystat
+                          icon: sh:jellystat.png
 
                     - type: monitor
                       cache: 1m
