@@ -15,8 +15,7 @@ spec:
       labels:
         app: glance-1
       annotations:
-        configmap.reloader.stakater.com/match: "true"
-        secret.reloader.stakater.com/match: "true"
+        reloader.stakater.com/auto: "true"
     spec:
       tolerations:
       - key: "node.kubernetes.io/unreachable"

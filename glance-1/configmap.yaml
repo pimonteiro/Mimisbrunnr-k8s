@@ -4,6 +4,8 @@ kind: ConfigMap
 metadata:
   name: glance-config
   namespace: glance-1
+  annotations:
+    reloader.stakater.com/match: "true"
 data:
   glance.yml: |
     # Glance configuration
