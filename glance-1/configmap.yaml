@@ -166,9 +166,6 @@ data:
                         - title: Profilarr
                           url: https://profilarr.pimonlab.xyz
                           icon: sh:profilarr
-                        - title: Cleanuparr
-                          url: https://cleanuparr.pimonlab.xyz
-                          icon: sh:cleanuparr
                         - title: Qbittorrent
                           url: https://qbit.pimonlab.xyz
                           icon: sh:qbittorrent
@@ -200,7 +197,7 @@ data:
                           icon: sh:portainer
                         - title: TrueNas
                           url: https://truenas.pimonlab.xyz
-                          icon: sh:truenas
+                          icon: sh:truenas-scale
                         - title: Traefik
                           url: https://traefik.internal.pimonlab.xyz
                           icon: sh:traefik
@@ -215,7 +212,7 @@ data:
                           icon: sh:router
                         - title: UPS 
                           url: https://nut-server.pimonlab.xyz/cgi-bin/nut/upsstats.cgi
-                          icon: sh:ups
+                          icon: sh:nutalert-dark
                         - title: Speedtest
                           url: https://speedtracker.pimonlab.xyz
                           icon: sh:speedtest
