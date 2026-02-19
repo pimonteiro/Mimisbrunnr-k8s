@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: glance-1
+  namespace: glance-1
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate 
+  selector:
+    matchLabels:
+      app: glance-1
+  template:
+    metadata:
+      labels:
+        app: glance-1
+    spec:
+      tolerations:
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+      volumes:
+        - name: glance-config
+          configMap:
+            name: glance-config
+        - name: glance-secrets
+          secret:
+            secretName: glance-1-pihole-password
+      containers:
+        - name: glance
+          image: glanceapp/glance:latest
+          ports:
+          - containerPort: 80
+          volumeMounts:
+            - name: glance-config
+              mountPath: /app/config/glance.yml
+              subPath: glance.yml
+            - name: glance-secrets
+              mountPath: /app/secrets
+          livenessProbe:
+            httpGet:
+              path: / # Or the specific health check path for Suwayomi
+              port: 80
+            initialDelaySeconds: 60 # Give it time to boot
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "200Mi"
+            limits:
+              cpu: "200m"
+              memory: "250Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: glance-1
+  namespace: glance-1
+spec:
+  type: ClusterIP
+  selector:
+    app: glance-1
+  ports:
+  - port: 80
+    targetPort: 8080

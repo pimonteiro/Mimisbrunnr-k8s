@@ -1,0 +1,322 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: glance-config
+  namespace: glance-1
+data:
+  glance.yml: |
+    # Glance configuration
+    # Update this file with your glance configuration
+      pages:
+        - name: Home
+          columns:
+            - size: small
+              widgets:
+                - type: dns-stats
+                  service: pihole-v6
+                  url: http://pi.hole/
+                  password: /app/secrets/password
+
+                - type: calendar
+                  first-day-of-week: monday
+
+                - type: twitch-channels
+                  channels:
+                    - linustech
+
+                - type: bookmarks
+                  groups:
+                    - links:
+                        - title: ProtonMail
+                          url: https://mail.proton.me/u/0/inbox
+                        - title: Gmail
+                          url: https://mail.google.com/mail/u/0/
+                        - title: Google Photos
+                          url: https://photos.google.com/
+                        - title: Github
+                          url: https://github.com/pimonteiro
+                        - title: Amazon
+                          url: https://www.amazon.es/
+                    - title: Entertainment
+                      color: 10 70 50
+                      links:
+                        - title: YouTube
+                          url: https://www.youtube.com/
+                    - title: Social
+                      color: 200 50 50
+                      links:
+                        - title: Reddit
+                          url: https://www.reddit.com/
+                        - title: Instagram
+                          url: https://www.instagram.com/
+
+                - type: custom-api
+                  title: Random Fact
+                  cache: 6h
+                  url: https://uselessfacts.jsph.pl/api/v2/facts/random
+                  template: |
+                    <p class="size-h4 color-paragraph">{{ .JSON.String "text" }}</p>
+
+            - size: full
+              widgets:
+                - type: search
+                  search-engine: https://search.pimonlab.xyz/search?q={QUERY}
+                  bangs:
+                    - title: YouTube
+                      shortcut: "!yt"
+                      url: https://www.youtube.com/results?search_query={QUERY}
+
+                - type: monitor
+                  cache: 1m
+                  title: Personal Services
+                  sites:
+                    - title: Immich
+                      url: https://immich.pimonlab.xyz
+                      icon: sh:immich
+                    - title: Immich Tools
+                      url: https://immich-tools.pimonlab.xyz/
+                      icon: sh:immich-power-tools
+                    - title: Paperless-NGX
+                      url: https://paperless.pimonlab.xyz
+                      icon: sh:paperless-ngx
+                    - title: Warracker
+                      url: https://warracker.pimonlab.xyz
+                      icon: sh:warracker
+                    - title: ByteStash
+                      url: https://bytestash.pimonlab.xyz
+                      icon: sh:bytestash
+                    - title: Jellyfin
+                      url: https://jellyfin.pimonlab.xyz
+                      icon: sh:jellyfin
+                    - title: Jellseerr
+                      url: https://jellyseerr.pimonlab.xyz
+                      icon: sh:jellyseerr
+                    - title: Hoarder
+                      url: https://hoarder.pimonlab.xyz
+                      icon: sh:hoarder
+
+                - type: monitor
+                  cache: 1m
+                  title: Other Services
+                  sites:
+                    - title: Pangolin
+                      url: https://pangolin.pimonlab.xyz
+                      icon: sh:pangolin
+                    - title: Authentik
+                      url: https://authentik.pimonlab.xyz
+                      icon: sh:authentik
+                    - title: Excalidraw
+                      url: https://excalidraw.pimonlab.xyz
+                      icon: sh:excalidraw
+                    - title: Contentshare
+                      url: https://contentshare.pimonlab.xyz
+                      icon: sh:contentshare
+                    # - title: QuickShare
+                    #   url: https://quickshare.pimonlab.xyz
+                    #   icon: sh:quickshare
+                    - title: IT-Tools
+                      url: https://it-tools.pimonlab.xyz
+                      icon: sh:it-tools
+                    - title: Webhook Tester
+                      url: https://webhooker.pimonlab.xyz/
+                      icon: sh:webhook-tester
+
+                - type: group
+                  widgets:
+                    - type: hacker-news
+                    - type: lobsters
+
+                - type: videos
+                  channels:
+                    - UCXuqSBlHAE6Xw-yeJA0Tunw # Linus Tech Tips
+                    - UCR-DXc1voovS8nhAvccRZhg # Jeff Geerling
+                    - UCejzv0MInydp0Isrza8e0tw # Jenny Philips
+                    - UCgdTVe88YVSrOZ9qKumhULQ # Hardware Haven
+                    - UCUUTdohVElFLSP4NBnlPEwA # Jim's Garage
+                    - UCOk-gHyjcWZNj3Br4oxwh0A # Techno Tim
+
+            - size: small
+              widgets:
+                - type: weather
+                  location: Guimarães, Portugal
+                  units: metric # alternatively "imperial"
+                  hour-format: 24h # alternatively "24h"
+                  # Optionally hide the location from being displayed in the widget
+                  # hide-location: true
+
+                - type: group
+                  widgets:
+                    - type: monitor
+                      cache: 1m
+                      title: Starr
+                      sites:
+                        - title: Sonarr
+                          url: https://sonarr.pimonlab.xyz
+                          icon: sh:sonarr
+                        - title: Radarr
+                          url: https://radarr.pimonlab.xyz
+                          icon: sh:radarr
+                        - title: Prowlarr
+                          url: https://prowlarr.pimonlab.xyz
+                          icon: sh:prowlarr
+                        - title: Bazarr
+                          url: https://bazarr.pimonlab.xyz
+                          icon: sh:bazarr
+                        - title: Profilarr
+                          url: https://profilarr.pimonlab.xyz
+                          icon: sh:profilarr
+                        - title: Cleanuparr
+                          url: https://cleanuparr.pimonlab.xyz
+                          icon: sh:cleanuparr
+                        - title: Qbittorrent
+                          url: https://qbit.pimonlab.xyz
+                          icon: sh:qbittorrent
+                        - title: JellyStat
+                          url: https://jellystat.pimonlab.xyz
+                          icon: sh:jellystat
+
+                    - type: monitor
+                      cache: 1m
+                      title: Infrastructure
+                      sites:
+                        - title: Router PVE
+                          url: https://router-pve.pimonlab.xyz
+                          icon: sh:proxmox
+                        - title: Odin
+                          url: https://odin.pimonlab.xyz
+                          icon: sh:proxmox
+                        - title: Thor
+                          url: https://thor.pimonlab.xyz
+                          icon: sh:proxmox
+                        - title: Proxmox Backup Server
+                          url: https://pbs.pimonlab.xyz
+                          icon: sh:proxmox
+                        - title: Portainer Intenral
+                          url: https://portainer.internal.pimonlab.xyz
+                          icon: sh:portainer
+                        - title: Portainer External
+                          url: https://portainer.external.pimonlab.xyz
+                          icon: sh:portainer
+                        - title: TrueNas
+                          url: https://truenas.pimonlab.xyz
+                          icon: sh:truenas
+                        - title: Traefik
+                          url: https://traefik.internal.pimonlab.xyz
+                          icon: sh:traefik
+                        - title: UptimeKuma
+                          url: https://uptime.pimonlab.xyz
+                          icon: sh:uptime-kuma
+                        - title: OPNsense
+                          url: https://opnsense.pimonlab.xyz
+                          icon: sh:opnsense
+                        - title: Managed Switch
+                          url: http://172.16.16.2
+                          icon: sh:router
+                        - title: UPS 
+                          url: https://nut-server.pimonlab.xyz/cgi-bin/nut/upsstats.cgi
+                          icon: sh:ups
+                        - title: Speedtest
+                          url: https://speedtracker.pimonlab.xyz
+                          icon: sh:speedtest
+
+                    - type: monitor
+                      cache: 1m
+                      title: Monitoring
+                      sites:
+                        - title: Pulse
+                          url: http://192.168.6.16:7655
+                          icon: sh:pulse
+                        - title: Grafana
+                          url: https://grafana.pimonlab.xyz
+                          icon: sh:grafana
+                        - title: VictoriaMetrics
+                          url: https://prometheus.pimonlab.xyz
+                          icon: sh:victoriametrics
+                        - title: InfluxDB
+                          url: https://influxdb.pimonlab.xyz
+                          icon: sh:influxdb
+
+                - type: releases
+                  cache: 1d
+                  # Without authentication the Github API allows for up to 60 requests per hour. You can create a
+                  # read-only token from your Github account settings and use it here to increase the limit.
+                  # token: ...
+                  repositories:
+                    - glanceapp/glance
+                    - go-gitea/gitea
+                    - immich-app/immich
+                    - syncthing/syncthing
+
+                - type: custom-api
+                  title: Steam Specials
+                  cache: 12h
+                  url: https://store.steampowered.com/api/featuredcategories?cc=us
+                  template: |
+                    <ul class="list list-gap-10 collapsible-container" data-collapse-after="5">
+                    {{ range .JSON.Array "specials.items" }}
+                      <li>
+                        <a class="size-h4 color-highlight block text-truncate" href="https://store.steampowered.com/app/{{ .Int "id" }}/">{{ .String "name" }}</a>
+                        <ul class="list-horizontal-text">
+                          <li>{{ div (.Int "final_price" | toFloat) 100 | printf "$%.2f" }}</li>
+                          {{ $discount := .Int "discount_percent" }}
+                          <li{{ if ge $discount 40 }} class="color-positive"{{ end }}>{{ $discount }}% off</li>
+                        </ul>
+                      </li>
+                    {{ end }}
+                    </ul>
+
+        - name: News
+          columns:
+            - size: small
+              widgets:
+                - type: calendar
+                  first-day-of-week: monday
+
+                - type: rss
+                  limit: 10
+                  collapse-after: 3
+                  cache: 12h
+                  feeds:
+                    - url: https://selfh.st/rss/
+                      title: selfh.st
+                    - url: https://ciechanow.ski/atom.xml
+                    - url: https://www.joshwcomeau.com/rss.xml
+                      title: Josh Comeau
+                    - url: https://samwho.dev/rss.xml
+                    - url: https://ishadeed.com/feed.xml
+                      title: Ahmad Shadeed
+
+
+            - size: full
+              widgets:
+                - type: group
+                  widgets:
+                    - type: reddit
+                      subreddit: technology
+                      show-thumbnails: true
+                    - type: reddit
+                      subreddit: selfhosted
+                      show-thumbnails: true
+                    - type: reddit
+                      subreddit: homelab
+                      show-thumbnails: true
+
+            - size: small
+              widgets:
+                - type: markets
+                  # The link to go to when clicking on the symbol in the UI,
+                  # {SYMBOL} will be substituded with the symbol for each market
+                  symbol-link-template: https://www.tradingview.com/symbols/{SYMBOL}/news
+                  markets:
+                    - symbol: SPY
+                      name: S&P 500
+                    - symbol: BTC-USD
+                      name: Bitcoin
+                    - symbol: NVDA
+                      name: NVIDIA
+                    - symbol: AAPL
+                      name: Apple
+                    - symbol: MSFT
+                      name: Microsoft
+

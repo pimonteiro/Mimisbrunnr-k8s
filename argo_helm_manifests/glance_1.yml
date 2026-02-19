@@ -5,18 +5,6 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  sources:
-    - repoURL: 'https://github.com/felixZmn/glance.git'
-      targetRevision: 1.0.0
-      path: .
-      helm:
-        values: |
-          ingress:
-            enabled: false
-
-    - repoURL: 'https://github.com/pimonteiro/Mimisbrunnr-k8s.git'
-      targetRevision: HEAD
-      path: glance-1
   destination:
     server: 'https://kubernetes.default.svc'
     namespace: glance-1
@@ -26,3 +14,7 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+  sources:
+    - repoURL: 'https://github.com/pimonteiro/Mimisbrunnr-k8s.git'
+      targetRevision: HEAD
+      path: glance-1

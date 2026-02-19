@@ -1,0 +1,14 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: glance-1-pihole-password
+  namespace: glance-1
+spec:
+  encryptedData:
+    password: AgBijuooTQ3Ks/3YLuwTkGdeJo3lg2jacJ5NPfNc3qwdOkRxZow/I/nQFImdk1K6PMmON6bqq/Ul5pNfJNT4in/oEwt5myXFLyk0/NeiUaUpBzyt30aHxGb8EI2PTAn+XzGfp7kmbWpQSMAMVSIwBQG2f1e/AxIo23dH3lddAb+1PDXkDqmYDje1nCBGKNwSrdL7tZILEA3+hlMERNj8Hz1LPjIF7tzwKt8y+y9wCmS2Y3dPNq/Cr9gWIzFNGlNBGowrAxgjmWBQCTi4aPUB7TuLQfzWhP5RISjNM4r/sAsixd7G27+sJ1lzLqBT/+VGPVD4uiv22l8pFBLYMTv0a8/GqsFV26XSastI/TI35xbmsrGzH6KHLM79VXQPT4sQGAU9XjypfeipRMxcjUrvngZhSThxb1U6ljmxsG8PIZxt6mdpt9cnFUVbeQATu9TRHReGIaT/pa3BS2/aRSr82qZ2nOAk+TjjsEg9cMNofUfTcNEHJK2wP7qzbVzyPGDJvwq/rN+iUBfxug9qUpWhRZ9vjIb27BvKG/0g1DZli2xvH/d5CMrsKc3Jv+f509PmSrUtOZVuDV6ZkkW/oV0maiXWnBGXCLrQUSaiQYqornUVqWZsbuaBqX81TXLtNR2YUBDbdot1Ncr2vJEfcccnuNaC0rxBDAPBUN2OvpElGYl4NV1FwVJ7qxZquobxaSGVOymeWn9Pz4ZaDFYEQSfa
+  template:
+    metadata:
+      name: glance-1-pihole-password
+      namespace: glance-1
+    type: Opaque
