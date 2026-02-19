@@ -211,7 +211,7 @@ data:
                           icon: sh:opnsense
                         - title: Managed Switch
                           url: http://172.16.16.2
-                          icon: sh:router
+                          icon: sh:opnsense
                         - title: UPS 
                           url: https://nut-server.pimonlab.xyz/cgi-bin/nut/upsstats.cgi
                           icon: sh:nutalert-dark
