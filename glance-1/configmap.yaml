@@ -16,7 +16,7 @@ data:
                 - type: dns-stats
                   service: pihole-v6
                   url: http://pi.hole/
-                  password: ${secret:pihole-password}
+                  password: ${readFileFromEnv:PIHOLE_PASSWORD_FILE}
 
                 - type: calendar
                   first-day-of-week: monday
