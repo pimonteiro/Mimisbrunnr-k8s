@@ -37,6 +37,13 @@ spec:
       containers:
         - name: speedtest-tracker-1
           image: lscr.io/linuxserver/speedtest-tracker:latest
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "400Mi"
+            requests:
+              memory: 256Mi
+              cpu: "200Mi"
           env:
             - name: PUID
               value: "1000"
@@ -51,6 +58,7 @@ spec:
             - name: SPEEDTEST_SERVERS
               value: 47363,10363
             - name: APP_KEY
+              value: ""
               valueFrom:
                 secretKeyRef:
                   name: speedtest-tracker-1-password

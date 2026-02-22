@@ -15,7 +15,7 @@ spec:
     kind: ClusterIssuer
   commonName: "suwayomi-k3s.pimonlab.xyz"
   dnsNames:
-  - "suwayomi-k3s.pimonlab.xyz"
+    - "suwayomi-k3s.pimonlab.xyz"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -25,7 +25,7 @@ metadata:
 spec:
   replicas: 1
   strategy:
-    type: Recreate 
+    type: Recreate
   selector:
     matchLabels:
       app: suwayomi-server-1
@@ -39,72 +39,72 @@ spec:
       securityContext:
         runAsUser: 1000
         runAsGroup: 1000
-        fsGroup: 1000    # This tells k8s to chown the volume to group 1000
+        fsGroup: 1000 # This tells k8s to chown the volume to group 1000
       tolerations:
-      - key: "node.kubernetes.io/unreachable"
-        operator: "Exists"
-        effect: "NoExecute"
-        tolerationSeconds: 30
-      - key: "node.kubernetes.io/not-ready"
-        operator: "Exists"
-        effect: "NoExecute"
-        tolerationSeconds: 30
+        - key: "node.kubernetes.io/unreachable"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 30
+        - key: "node.kubernetes.io/not-ready"
+          operator: "Exists"
+          effect: "NoExecute"
+          tolerationSeconds: 30
       containers:
-      - name: suwayomi
-        image: ghcr.io/suwayomi/suwayomi-server:stable
-        ports:
-        - containerPort: 4567
-        livenessProbe:
-          httpGet:
-            path: / # Or the specific health check path for Suwayomi
-            port: 4567
-          initialDelaySeconds: 60 # Give it time to boot
-          periodSeconds: 15
-        readinessProbe:
-          httpGet:
-            path: /
-            port: 4567
-          initialDelaySeconds: 30
-          periodSeconds: 15
-        env:
-        - name: TZ
-          value: "Europe/Lisbon"
-        - name: FLARESOLVERR_ENABLED
-          value: "true"
-        - name: FLARESOLVERR_URL
-          value: "http://flaresolverr-1:8191"
-        - name: AUTH_MODE
-          value: "simple_login"
-        - name: AUTH_USERNAME
-          valueFrom:
-            secretKeyRef:
-              name: suwayomi-server-1-auth
-              key: username
-        - name: AUTH_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: suwayomi-server-1-auth
-              key: password
-        volumeMounts:
-        # ORDER MATTERS: Downloads first
-        - name: downloads
-          mountPath: /home/suwayomi/.local/share/Tachidesk/downloads
-        - name: data
-          mountPath: /home/suwayomi/.local/share/Tachidesk
+        - name: suwayomi
+          image: ghcr.io/suwayomi/suwayomi-server:stable
+          resources:
+            requests:
+              cpu: "300m"
+              memory: "512Mi"
+            limits:
+              cpu: "400m"
+              memory: "1Gi"
+          ports:
+            - containerPort: 4567
+          livenessProbe:
+            httpGet:
+              path: / # Or the specific health check path for Suwayomi
+              port: 4567
+            initialDelaySeconds: 60 # Give it time to boot
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 4567
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          env:
+            - name: TZ
+              value: "Europe/Lisbon"
+            - name: FLARESOLVERR_ENABLED
+              value: "true"
+            - name: FLARESOLVERR_URL
+              value: "http://flaresolverr-1:8191"
+            - name: AUTH_MODE
+              value: "simple_login"
+            - name: AUTH_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: suwayomi-server-1-auth
+                  key: username
+            - name: AUTH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: suwayomi-server-1-auth
+                  key: password
+          volumeMounts:
+            # ORDER MATTERS: Downloads first
+            - name: downloads
+              mountPath: /home/suwayomi/.local/share/Tachidesk/downloads
+            - name: data
+              mountPath: /home/suwayomi/.local/share/Tachidesk
       volumes:
-      - name: downloads
-        persistentVolumeClaim:
-          claimName: suwayomi-server-1-downloads-pvc
-      - name: data
-        persistentVolumeClaim:
-          claimName: suwayomi-server-1-data-pvc
-        resources:
-          requests:
-            cpu: "300m"
-            memory: "512Mi"
-          limits:
-            cpu: "400m"
-            memory: "1Gi"
+        - name: downloads
+          persistentVolumeClaim:
+            claimName: suwayomi-server-1-downloads-pvc
+        - name: data
+          persistentVolumeClaim:
+            claimName: suwayomi-server-1-data-pvc
 ---
 apiVersion: v1
 kind: Service
@@ -116,8 +116,8 @@ spec:
   selector:
     app: suwayomi-server-1
   ports:
-  - port: 4567 # Internal port
-    targetPort: 4567
+    - port: 4567 # Internal port
+      targetPort: 4567
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
