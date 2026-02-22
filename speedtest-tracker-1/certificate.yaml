@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: speedtest-tracker-1-tls-cert
+  namespace: speedtest-tracker-1
+spec:
+  secretName: speedtest-tracker-1-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "speedtest.pimonlab.xyz"
+  dnsNames:
+  - "speedtest.pimonlab.xyz"
