@@ -1,0 +1,16 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: speedtest-tracker-1-password
+  namespace: speedtest-tracker-1
+spec:
+  encryptedData:
+    app_key: AgAl4B3ECmu3Z01dSPtIpS0EgJoZ/FFlMiNKwUcY9sxDesc9t65VtDMf/Aiu0Fb8MxfmHFFc2Q8IQ7BCMMqOeauB8JCYcYN7g+GBeVL44Q/P3WKDMzyr00gSJxYPGuAzGzx3eq5HZOq432dMPMDhx31vrjMI72YISCO0XOI9l69J/53lbUMp8d+ynwmZOCPjHtxrWVE6K6UwWqj0Lf8WIE/M5M4OkMDLu7cXxAvpB/5t2ik6n0wJo6AkoQr5JOWQ7rdWBQGvyIo6Ozx5SmfuaghZwDHbWvgyCjVwcNFRUiJoqZRfz8yaQieLdRpqcSXxV0Xw0DKcyDaa/wVCvhh6dJzHps08wMdDO/DoHnNSDeeu4rlyghiefqfnOIOe6E4k+kZk5UfCiUJZGQIv12SZy0gvChlg880gL9RItxj0qLlxQy/ie7DZQNzz9bD5/W8WQ89X4M2oItjvO9W3aPlXOg4Wfk2LQoPrmlI9v+0+EGijv5myLh1ugsr9P9u6G1iT+VOE/rg4JVIHpY5GEMqOB+2LcJl6tyS9/cwcmxjKH1ssqAA5Huf2WPeVOwwtSFDByBR5tgzzHpZ1dgVg6PFcbW75/FfBY/A8LHfevXw0s7YWoVMG49yl9++tkjWDLhCZyEkoNCxydBQUZYTEEC3a7X6mZh5149TPFnNwQdH+bW2rifG4GxFtCBBI2X1VCu4Zuebaig61myqzaGI+fvGJIRUMeT2IU6O35XVeUshRn9+6GUYdQP0sSThcRuu7Ikn6ACPjjqA=
+  template:
+    metadata:
+      annotations:
+        reloader.stakater.com/match: "true"
+      name: speedtest-tracker-1-password
+      namespace: speedtest-tracker-1
+    type: Opaque

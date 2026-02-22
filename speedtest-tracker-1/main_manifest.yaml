@@ -43,7 +43,10 @@ spec:
             - name: PGID
               value: "1000"
             - name: APP_KEY
-              value: base64:q5T0W7+/8KREktITAfQMYNRRY7MgnOS3GiUGWSfo9xU=
+              valueFrom:
+                secretKeyRef:
+                  name: speedtest-tracker-1-password
+                  key: app_key
             - name: DISPLAY_TIMEZONE
               value: UTC
             - name: DB_CONNECTION
