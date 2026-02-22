@@ -40,10 +40,10 @@ spec:
           resources:
             limits:
               memory: 512Mi
-              cpu: "400Mi"
+              cpu: "400m"
             requests:
               memory: 256Mi
-              cpu: "200Mi"
+              cpu: "200m"
           env:
             - name: PUID
               value: "1000"
