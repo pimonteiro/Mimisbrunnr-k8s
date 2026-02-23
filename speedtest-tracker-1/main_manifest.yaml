@@ -16,13 +16,15 @@ metadata:
   name: speedtest-tracker-1
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
-      app.kubernetes.io/name: speedtest-tracker-1
+      app: speedtest-tracker-1
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: speedtest-tracker-1
+        app: speedtest-tracker-1
     spec:
       dnsPolicy: None
       dnsConfig:
@@ -75,12 +77,11 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  labels:
-    app.kubernetes.io/name: speedtest-tracker-1
   name: speedtest-tracker-1
 spec:
   ports:
     - port: 80
-  selector:
-    app.kubernetes.io/name: speedtest-tracker-1
+      targetPort: 80
   type: ClusterIP
+  selector:
+    app: speedtest-tracker-1
