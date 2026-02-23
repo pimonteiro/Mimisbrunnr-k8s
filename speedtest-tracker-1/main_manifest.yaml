@@ -41,6 +41,8 @@ spec:
       containers:
         - name: speedtest-tracker-1
           image: lscr.io/linuxserver/speedtest-tracker:latest
+          ports:
+            - containerPort: 80
           resources:
             limits:
               memory: 512Mi
