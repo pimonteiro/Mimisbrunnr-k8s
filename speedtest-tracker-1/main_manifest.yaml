@@ -28,16 +28,16 @@ spec:
       labels:
         app: speedtest-tracker-1
     spec:
-      dnsPolicy: None
-      dnsConfig:
-        nameservers:
-          - 172.16.16.5
-          - 8.8.8.8
-        searches:
-          - speedtest-tracker-1.svc.cluster.local
-        options:
-          - name: ndots
-            value: "5"
+      # dnsPolicy: None
+      # dnsConfig:
+      #   nameservers:
+      #     - 172.16.16.5
+      #     - 8.8.8.8
+      #   searches:
+      #     - speedtest-tracker-1.svc.cluster.local
+      #   options:
+      #     - name: ndots
+      #       value: "5"
       containers:
         - name: speedtest-tracker-1
           image: lscr.io/linuxserver/speedtest-tracker:latest
@@ -63,6 +63,8 @@ spec:
               value: 0 * * * *
             - name: SPEEDTEST_SERVERS
               value: 47363,10363
+            - name: APP_URL
+              value: https://speedtest.pimonlab.xyz
             - name: APP_KEY
               valueFrom:
                 secretKeyRef:
