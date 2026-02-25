@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: seer-1
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: oci://ghcr.io/seerr-team/seerr/seerr-chart
+      path: .
+      targetRevision: 3.2.0
+      helm:
+        values: |
+          ingress:
+            enabled: false
+
+    - repoURL: 'https://github.com/pimonteiro/Mimisbrunnr-k8s.git'
+      targetRevision: HEAD
+      path: seer-1
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: seer-1
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: seer-1-tls-cert
+  namespace: seer-1
+spec:
+  secretName: seer-1-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "seer.pimonlab.xyz"
+  dnsNames:
+  - "seer.pimonlab.xyz"

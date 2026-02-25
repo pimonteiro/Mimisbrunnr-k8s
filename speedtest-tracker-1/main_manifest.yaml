@@ -28,16 +28,6 @@ spec:
       labels:
         app: speedtest-tracker-1
     spec:
-      # dnsPolicy: None
-      # dnsConfig:
-      #   nameservers:
-      #     - 172.16.16.5
-      #     - 8.8.8.8
-      #   searches:
-      #     - speedtest-tracker-1.svc.cluster.local
-      #   options:
-      #     - name: ndots
-      #       value: "5"
       containers:
         - name: speedtest-tracker-1
           image: lscr.io/linuxserver/speedtest-tracker:latest
