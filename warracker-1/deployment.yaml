@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: warracker-1
+  namespace: warracker-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: warracker-1
+  template:
+    metadata:
+      labels:
+        app: warracker-1
+    spec:
+      containers:
+        - name: warracker-1
+          image: ghcr.io/sassanix/warracker/main:latest
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "400m"
+            requests:
+              memory: 256Mi
+              cpu: "200m"
+          envFrom:
+            - secretRef:
+                name: warracker-1-env
+          env:
+            - name: DB_NAME
+              value: "warranty_db"
+            - name: DB_HOST
+              value: "warracker-1-db"
+            - name: OIDC_ISSUER_URL
+              value: "https://authentik.pimonlab.xyz/application/o/warratracker/"
+            - name: OIDC_SCOPE
+              value: "openid email profile"
+            - name: OIDC_ENABLED
+              value: "true"
+            - name: OIDC_PROVIDER_NAME
+              value: "Authentik"
+            - name: APP_BASE_URL
+              value: "https://warracker.pimonlab.xyz"
+            - name: FRONTEND_URL
+              value: "https://warracker.pimonlab.xyz"
+
+          volumeMounts:
+            - name: uploads-data
+              mountPath: /data/uploads
+      volumes:
+        - name: uploads-data
+          persistentVolumeClaim:
+            claimName: warracker-1-uploads-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: warracker-1
+  namespace: warracker-1
+spec:
+  selector:
+    app: warracker-1
+  ports:
+    - port: 80
+      targetPort: 80
+      name: http
