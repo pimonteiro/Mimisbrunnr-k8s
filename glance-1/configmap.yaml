@@ -91,7 +91,7 @@ data:
                     - title: Jellyfin
                       url: https://jellyfin.pimonlab.xyz
                       icon: sh:jellyfin
-                    - title: Jellseerr
+                    - title: Seerr
                       url: https://seer.pimonlab.xyz
                       icon: sh:jellyseerr
                     - title: Hoarder
