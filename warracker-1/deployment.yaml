@@ -34,7 +34,7 @@ spec:
             - name: DB_HOST
               value: "warracker-1-db"
             - name: OIDC_ISSUER_URL
-              value: "https://authentik.pimonlab.xyz/application/o/warratracker/"
+              value: "https://authentik.pimonlab.xyz/application/o/warracker/"
             - name: OIDC_SCOPE
               value: "openid email profile"
             - name: OIDC_ENABLED
