@@ -37,12 +37,12 @@ spec:
           # Healthchecks based on your docker-compose
           readinessProbe:
             exec:
-              command: ["pg_isready", "-U", "postgres"]
+              command: ["pg_isready", "-U", "warranty_user"]
             initialDelaySeconds: 5
             periodSeconds: 5
           livenessProbe:
             exec:
-              command: ["pg_isready", "-U", "postgres"]
+              command: ["pg_isready", "-U", "warranty_user"]
             initialDelaySeconds: 10
             periodSeconds: 10
       volumes:
