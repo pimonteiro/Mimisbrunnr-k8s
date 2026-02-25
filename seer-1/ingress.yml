@@ -13,6 +13,6 @@ spec:
       services:
         - name: seer-1-seerr-chart
           namespace: seer-1
-          port: 5000
+          port: 80
   tls:
     secretName: seer-1-ts-secret
