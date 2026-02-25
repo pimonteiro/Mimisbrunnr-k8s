@@ -8,7 +8,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`glance-k3s.pimonlab.xyz`)
+      match: Host(`glance.pimonlab.xyz`)
       priority: 10
       services:
         - name: glance-1

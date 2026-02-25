@@ -8,6 +8,6 @@ spec:
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer
-  commonName: "glance-k3s.pimonlab.xyz"
+  commonName: "glance.pimonlab.xyz"
   dnsNames:
-  - "glance-k3s.pimonlab.xyz"
+  - "glance.pimonlab.xyz"

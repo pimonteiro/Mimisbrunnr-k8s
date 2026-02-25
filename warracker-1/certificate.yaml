@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: warracker-1-tls-cert
+  namespace: warracker-1
+spec:
+  secretName: warracker-1-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "warracker.pimonlab.xyz"
+  dnsNames:
+  - "warracker.pimonlab.xyz"
