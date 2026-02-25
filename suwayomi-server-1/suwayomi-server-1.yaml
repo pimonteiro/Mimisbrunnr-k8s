@@ -79,7 +79,7 @@ spec:
             - name: FLARESOLVERR_ENABLED
               value: "true"
             - name: FLARESOLVERR_URL
-              value: "http://flaresolverr-1:8191"
+              value: "http://flaresolverr-1.suwayomi-server-1.svc.cluster.local:8191"
             - name: AUTH_MODE
               value: "simple_login"
             - name: AUTH_USERNAME
