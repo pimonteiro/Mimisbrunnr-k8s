@@ -13,9 +13,9 @@ spec:
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer
-  commonName: "suwayomi-k3s.pimonlab.xyz"
+  commonName: "suwayomi.pimonlab.xyz"
   dnsNames:
-    - "suwayomi-k3s.pimonlab.xyz"
+    - "suwayomi.pimonlab.xyz"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -129,7 +129,7 @@ spec:
     - websecure
   routes:
     - kind: Rule
-      match: Host(`suwayomi-k3s.pimonlab.xyz`)
+      match: Host(`suwayomi.pimonlab.xyz`)
       priority: 10
       services:
         - name: suwayomi-server-1
