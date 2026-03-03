@@ -4,7 +4,7 @@ metadata:
   name: warracker-1
   namespace: warracker-1
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: warracker-1
@@ -52,7 +52,7 @@ spec:
       volumes:
         - name: uploads-data
           persistentVolumeClaim:
-            claimName: warracker-1-uploads-pvc
+            claimName: warracker-1-uploads-mig-pvc
 ---
 apiVersion: v1
 kind: Service
