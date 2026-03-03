@@ -78,7 +78,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: data-mig-pvc
+  name: data-pvc
   namespace: karakeep-1
 spec:
   accessModes:
