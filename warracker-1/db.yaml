@@ -4,7 +4,7 @@ metadata:
   name: warracker-1-db
   namespace: warracker-1
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: warracker-1-db
