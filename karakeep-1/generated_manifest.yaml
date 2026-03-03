@@ -78,7 +78,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: data-pvc
+  name: data-mig-pvc
   namespace: karakeep-1
 spec:
   accessModes:
@@ -107,7 +107,7 @@ metadata:
   name: chrome
   namespace: karakeep-1
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: chrome
@@ -135,7 +135,7 @@ metadata:
   name: meilisearch
   namespace: karakeep-1
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: meilisearch
@@ -161,7 +161,7 @@ spec:
       volumes:
       - name: meilisearch
         persistentVolumeClaim:
-          claimName: meilisearch-pvc
+          claimName: meilisearch-mig-pvc
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -169,7 +169,7 @@ metadata:
   name: web
   namespace: karakeep-1
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: karakeep-web
@@ -202,4 +202,4 @@ spec:
       volumes:
       - name: data
         persistentVolumeClaim:
-          claimName: data-pvc
+          claimName: data-mig-pvc
