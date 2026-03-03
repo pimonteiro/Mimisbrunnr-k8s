@@ -101,10 +101,10 @@ spec:
       volumes:
         - name: downloads
           persistentVolumeClaim:
-            claimName: suwayomi-server-1-downloads-pvc
+            claimName: suwayomi-server-1-downloads-mig-pvc
         - name: data
           persistentVolumeClaim:
-            claimName: suwayomi-server-1-data-pvc
+            claimName: suwayomi-server-1-data-mig-pvc
 ---
 apiVersion: v1
 kind: Service
