@@ -107,7 +107,7 @@ metadata:
   name: chrome
   namespace: karakeep-1
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: chrome
@@ -135,7 +135,7 @@ metadata:
   name: meilisearch
   namespace: karakeep-1
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: meilisearch
@@ -169,7 +169,7 @@ metadata:
   name: web
   namespace: karakeep-1
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: karakeep-web
