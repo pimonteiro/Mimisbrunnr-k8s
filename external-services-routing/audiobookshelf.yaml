@@ -8,23 +8,38 @@ spec:
     - name: web
       port: 13378
       targetPort: 13378
+  selector:
+    app: audiobookshelf-proxy
 ---
-apiVersion: discovery.k8s.io/v1
-kind: EndpointSlice
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: audiobookshelf-slice
+  name: audiobookshelf-proxy
   namespace: external-services
-  labels:
-    # This label is the MAGqIC GLUE that links this slice to the Service above
-    kubernetes.io/service-name: audiobookshelf-svc
-addressType: IPv4
-ports:
-  - name: web # Must match the Service port name
-    port: 13378
-    protocol: TCP
-endpoints:
-  - addresses:
-      - "192.168.3.2" # Your external IP
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: audiobookshelf-proxy
+  template:
+    metadata:
+      labels:
+        app: audiobookshelf-proxy
+    spec:
+      containers:
+      - name: socat
+        image: alpine/socat
+        # Listen on 13378 inside the pod, forward to 192.168.3.2:13378
+        args: ["TCP-LISTEN:13378,fork", "TCP:192.168.3.2:13378"]
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "25Mi"
+          limits:
+            cpu: "10m"
+            memory: "50Mi"
+        ports:
+        - containerPort: 13378
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
