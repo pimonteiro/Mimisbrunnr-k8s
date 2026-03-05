@@ -14,6 +14,10 @@ spec:
           ingress:
             enabled: false
 
+          config:
+            persistence:
+              existingClaim: "seer-1-data-pvc"
+
     - repoURL: 'https://github.com/pimonteiro/Mimisbrunnr-k8s.git'
       targetRevision: HEAD
       path: seer-1

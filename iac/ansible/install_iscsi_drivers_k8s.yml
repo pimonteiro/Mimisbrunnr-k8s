@@ -1,0 +1,22 @@
+---
+- name: Install scsci drivers
+  hosts: all
+  become: yes
+  serial: 0
+
+  tasks:
+    - name: Install iSCSI drivers and tools
+      apt:
+        name:
+          - open-iscsi
+          - lsscsi
+          - sg3-utils
+          - multipath-tools
+          - scsitools
+        state: present
+
+    - name: Enable and start iscsid service
+      systemd:
+        name: iscsid
+        state: started
+        enabled: yes

@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: audiobookshelf-svc
+  namespace: external-services
+spec:
+  ports:
+    - name: web
+      port: 80       # Port inside K3s
+      targetPort: 13378 # Port on external host
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: audiobookshelf-svc
+  namespace: external-services
+subsets:
+  - addresses:
+      - ip: 192.168.3.2 # Host IP
+    ports:
+      - port: 13378
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: audiobookshelf-tls-cert
+  namespace: external-services
+spec:
+  secretName: audiobookshelf-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "audiobookshelf.pimonlab.xyz"
+  dnsNames:
+  - "audiobookshelf.pimonlab.xyz"
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: audiobookshelf-ingress
+  namespace: external-services
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`audiobookshelf.pimonlab.xyz`)
+      kind: Rule
+      services:
+        - name: audiobookshelf-svc
+          port: 13378

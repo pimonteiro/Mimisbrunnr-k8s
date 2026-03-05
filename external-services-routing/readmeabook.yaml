@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: readmeabook-svc
+  namespace: external-services
+spec:
+  ports:
+    - name: web
+      port: 80       # Port inside K3s
+      targetPort: 3030 # Port on external host
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: readmeabook-svc
+  namespace: external-services
+subsets:
+  - addresses:
+      - ip: 192.168.3.2 # Host IP
+    ports:
+      - port: 3030
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: readmeabook-tls-cert
+  namespace: external-services
+spec:
+  secretName: readmeabook-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "readmeabook.pimonlab.xyz"
+  dnsNames:
+  - "readmeabook.pimonlab.xyz"
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: readmeabook-ingress
+  namespace: external-services
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`readmeabook.pimonlab.xyz`)
+      kind: Rule
+      services:
+        - name: readmeabook-svc
+          port: 3030

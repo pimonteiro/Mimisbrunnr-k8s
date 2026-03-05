@@ -54,8 +54,7 @@ spec:
           # Agent mode uses a WAL (Write Ahead Log) but no TSDB. 
           # You can disable the large Persistent Volume, or keep a small one for buffering during network outages.
           persistentVolume:
-            enabled: true
-            size: 2Gi 
+            enabled: false
 
           # Disable the retention flag which is incompatible with Agent mode (depending on chart version)
           # agent mode handles WAL retention differently, but the chart might inject retention flags.
