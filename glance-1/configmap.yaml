@@ -175,48 +175,64 @@ data:
                           url: https://jellystat.pimonlab.xyz
                           icon: sh:jellystat.png
 
-                  cache: 1m
-                  title: Infrastructure
-                  sites:
-                    - title: Router PVE
-                      url: https://router-pve.pimonlab.xyz
-                      icon: sh:proxmox
-                    - title: Odin
-                      url: https://odin.pimonlab.xyz
-                      icon: sh:proxmox
-                    - title: Thor
-                      url: https://thor.pimonlab.xyz
-                      icon: sh:proxmox
-                    - title: Proxmox Backup Server
-                      url: https://pbs.pimonlab.xyz
-                      icon: sh:proxmox
-                    - title: Portainer Intenral
-                      url: https://portainer.internal.pimonlab.xyz
-                      icon: sh:portainer
-                    - title: Portainer External
-                      url: https://portainer.external.pimonlab.xyz
-                      icon: sh:portainer
-                    - title: TrueNas
-                      url: https://truenas.pimonlab.xyz
-                      icon: sh:truenas-scale
-                    - title: Traefik
-                      url: https://traefik.internal.pimonlab.xyz
-                      icon: sh:traefik
-                    - title: UptimeKuma
-                      url: https://uptime.pimonlab.xyz
-                      icon: sh:uptime-kuma
-                    - title: OPNsense
-                      url: https://opnsense.pimonlab.xyz
-                      icon: sh:opnsense
-                    - title: Managed Switch
-                      url: http://172.16.16.2
-                      icon: sh:opnsense
-                    - title: UPS 
-                      url: https://nut-server.pimonlab.xyz/cgi-bin/nut/upsstats.cgi
-                      icon: sh:nutalert-dark
-                    - title: Speedtest
-                      url: https://speedtracker.pimonlab.xyz
-                      icon: sh:speedtest
+                - type: group
+                  widgets:
+                    - type: monitor
+                      cache: 1m
+                      title: AudioBook/E-Book
+                      sites:
+                        - title: Qbittorrent
+                          url: https://qbit-2.pimonlab.xyz
+                          icon: sh:qbittorrent
+                        - title: Mousehole
+                          url: http://192.168.3.2:5010
+                          icon: sh:qbittorrent
+
+                - type: monitor
+
+                    - type: monitor
+                      cache: 1m
+                      title: Infrastructure
+                      sites:
+                        - title: Router PVE
+                          url: https://router-pve.pimonlab.xyz
+                          icon: sh:proxmox
+                        - title: Odin
+                          url: https://odin.pimonlab.xyz
+                          icon: sh:proxmox
+                        - title: Thor
+                          url: https://thor.pimonlab.xyz
+                          icon: sh:proxmox
+                        - title: Proxmox Backup Server
+                          url: https://pbs.pimonlab.xyz
+                          icon: sh:proxmox
+                        - title: Portainer Intenral
+                          url: https://portainer.internal.pimonlab.xyz
+                          icon: sh:portainer
+                        - title: Portainer External
+                          url: https://portainer.external.pimonlab.xyz
+                          icon: sh:portainer
+                        - title: TrueNas
+                          url: https://truenas.pimonlab.xyz
+                          icon: sh:truenas-scale
+                        - title: Traefik
+                          url: https://traefik.internal.pimonlab.xyz
+                          icon: sh:traefik
+                        - title: UptimeKuma
+                          url: https://uptime.pimonlab.xyz
+                          icon: sh:uptime-kuma
+                        - title: OPNsense
+                          url: https://opnsense.pimonlab.xyz
+                          icon: sh:opnsense
+                        - title: Managed Switch
+                          url: http://172.16.16.2
+                          icon: sh:opnsense
+                        - title: UPS 
+                          url: https://nut-server.pimonlab.xyz/cgi-bin/nut/upsstats.cgi
+                          icon: sh:nutalert-dark
+                        - title: Speedtest
+                          url: https://speedtracker.pimonlab.xyz
+                          icon: sh:speedtest
 
                     - type: monitor
                       cache: 1m
