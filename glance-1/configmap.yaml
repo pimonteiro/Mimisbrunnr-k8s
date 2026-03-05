@@ -186,7 +186,7 @@ data:
                           icon: sh:qbittorrent
                         - title: Mousehole
                           url: http://192.168.3.2:5010
-                          icon: https://lowendbox.com/blog/is-myanonamouse-obsolete-yup/
+                          icon: sh:qbittorrent
 
                 - type: monitor
                   cache: 1m
