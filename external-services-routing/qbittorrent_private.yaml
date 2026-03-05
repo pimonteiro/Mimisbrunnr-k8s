@@ -1,0 +1,73 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: qbittorrent_private-svc
+  namespace: external-services
+spec:
+  ports:
+    - name: web
+      port: 8080
+      targetPort: 8080
+  selector:
+    app: qbittorrent_private-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qbittorrent_private-proxy
+  namespace: external-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qbittorrent_private-proxy
+  template:
+    metadata:
+      labels:
+        app: qbittorrent_private-proxy
+    spec:
+      containers:
+      - name: socat
+        image: alpine/socat
+        # Listen on 8080 inside the pod, forward to 192.168.3.2:8080
+        args: ["TCP-LISTEN:8080,fork", "TCP:192.168.3.2:8080"]
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "25Mi"
+          limits:
+            cpu: "10m"
+            memory: "50Mi"
+        ports:
+        - containerPort: 8080
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: qbittorrent_private-tls-cert
+  namespace: external-services
+spec:
+  secretName: qbittorrent_private-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "qbittorrent_private.pimonlab.xyz"
+  dnsNames:
+  - "qbittorrent_private.pimonlab.xyz"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: qbittorrent_private-ingress
+  namespace: external-services
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`qbittorrent_private.pimonlab.xyz`)
+      kind: Rule
+      services:
+        - name: qbittorrent_private-svc
+          port: 8080
+  tls:
+    secretName: qbittorrent_private-ts-secret
