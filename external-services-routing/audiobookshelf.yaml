@@ -8,8 +8,8 @@ spec:
   externalName: "192.168.3.2"
   ports:
     - name: web
-      port: 80       # Port inside K3s
-      targetPort: 13378 # Port on external host
+      port: 13378
+      targetPort: 13378
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -38,4 +38,4 @@ spec:
       kind: Rule
       services:
         - name: audiobookshelf-svc
-          port: 80
+          port: 13378
