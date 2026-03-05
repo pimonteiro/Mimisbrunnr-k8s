@@ -4,12 +4,27 @@ metadata:
   name: audiobookshelf-svc
   namespace: external-services
 spec:
-  type: ExternalName
-  externalName: "192.168.3.2"
   ports:
     - name: web
       port: 13378
       targetPort: 13378
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: audiobookshelf-slice
+  namespace: external-services
+  labels:
+    # This label is the MAGqIC GLUE that links this slice to the Service above
+    kubernetes.io/service-name: audiobookshelf-svc
+addressType: IPv4
+ports:
+  - name: web # Must match the Service port name
+    port: 13378
+    protocol: TCP
+endpoints:
+  - addresses:
+      - "192.168.3.2" # Your external IP
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -39,3 +54,5 @@ spec:
       services:
         - name: audiobookshelf-svc
           port: 13378
+  tls:
+    secretName: audiobookshelf-ts-secret
