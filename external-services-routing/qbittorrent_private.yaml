@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: qbittorrent_private-svc
+  name: qbit-2-svc
   namespace: external-services
 spec:
   ports:
@@ -9,22 +9,22 @@ spec:
       port: 8080
       targetPort: 8080
   selector:
-    app: qbittorrent_private-proxy
+    app: qbit-2-proxy
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: qbittorrent_private-proxy
+  name: qbit-2-proxy
   namespace: external-services
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: qbittorrent_private-proxy
+      app: qbit-2-proxy
   template:
     metadata:
       labels:
-        app: qbittorrent_private-proxy
+        app: qbit-2-proxy
     spec:
       containers:
       - name: socat
@@ -44,30 +44,30 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: qbittorrent_private-tls-cert
+  name: qbit-2-tls-cert
   namespace: external-services
 spec:
-  secretName: qbittorrent_private-ts-secret
+  secretName: qbit-2-ts-secret
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer
-  commonName: "qbittorrent_private.pimonlab.xyz"
+  commonName: "qbit-2.pimonlab.xyz"
   dnsNames:
-  - "qbittorrent_private.pimonlab.xyz"
+  - "qbit-2.pimonlab.xyz"
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: qbittorrent_private-ingress
+  name: qbit-2-ingress
   namespace: external-services
 spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`qbittorrent_private.pimonlab.xyz`)
+    - match: Host(`qbit-2.pimonlab.xyz`)
       kind: Rule
       services:
-        - name: qbittorrent_private-svc
+        - name: qbit-2-svc
           port: 8080
   tls:
-    secretName: qbittorrent_private-ts-secret
+    secretName: qbit-2-ts-secret
