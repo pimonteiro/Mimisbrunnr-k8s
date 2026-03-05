@@ -38,4 +38,4 @@ spec:
       kind: Rule
       services:
         - name: audiobookshelf-svc
-          port: 13378
+          port: 80

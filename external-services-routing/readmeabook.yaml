@@ -38,4 +38,4 @@ spec:
       kind: Rule
       services:
         - name: readmeabook-svc
-          port: 3030
+          port: 80
