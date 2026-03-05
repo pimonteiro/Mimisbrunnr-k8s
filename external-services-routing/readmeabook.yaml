@@ -11,6 +11,37 @@ spec:
       port: 3030
       targetPort: 3030
 ---
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: readmeabook-proxy
+  namespace: external-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: readmeabook-proxy
+  template:
+    metadata:
+      labels:
+        app: readmeabook-proxy
+    spec:
+      containers:
+      - name: socat
+        image: alpine/socat
+        # Listen on 3030 inside the pod, forward to 192.168.3.2:3030
+        args: ["TCP-LISTEN:3030,fork", "TCP:192.168.3.2:3030"]
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "25Mi"
+          limits:
+            cpu: "10m"
+            memory: "50Mi"
+        ports:
+        - containerPort: 3030
+---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -39,3 +70,5 @@ spec:
       services:
         - name: readmeabook-svc
           port: 3030
+  tls:
+    secretName: readmeabook-ts-secret
