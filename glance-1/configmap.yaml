@@ -175,20 +175,6 @@ data:
                           url: https://jellystat.pimonlab.xyz
                           icon: sh:jellystat.png
 
-                - type: group
-                  widgets:
-                    - type: monitor
-                      cache: 1m
-                      title: AudioBook/E-Book
-                      sites:
-                        - title: Qbittorrent
-                          url: http://192.168.3.2:8080
-                          icon: sh:qbittorrent
-                        - title: Mousehole
-                          url: http://192.168.3.2:5010
-                          icon: sh:qbittorrent
-
-                - type: monitor
                   cache: 1m
                   title: Infrastructure
                   sites:
