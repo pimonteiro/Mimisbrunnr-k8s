@@ -4,13 +4,12 @@ metadata:
   name: readmeabook-svc
   namespace: external-services
 spec:
-  type: ExternalName
-  externalName: "192.168.3.2"
   ports:
     - name: web
       port: 3030
       targetPort: 3030
----
+  selector:
+    app: readmeabook-proxy
 ---
 apiVersion: apps/v1
 kind: Deployment
