@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: authentik-svc
+  namespace: external-services
+spec:
+  ports:
+    - name: web
+      port: 9443
+      targetPort: 9443
+  selector:
+    app: authentik-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentik-proxy
+  namespace: external-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authentik-proxy
+  template:
+    metadata:
+      labels:
+        app: authentik-proxy
+    spec:
+      containers:
+      - name: socat
+        image: alpine/socat
+        args: ["TCP-LISTEN:9443,fork", "TCP:192.168.10.100:9443"]
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "25Mi"
+          limits:
+            memory: "50Mi"
+        ports:
+        - containerPort: 9443
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: authentik-tls-cert
+  namespace: external-services
+spec:
+  secretName: authentik-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "authentik.pimonlab.xyz"
+  dnsNames:
+  - "authentik.pimonlab.xyz"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: authentik-ingress
+  namespace: external-services
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`authentik.pimonlab.xyz`)
+      kind: Rule
+      services:
+        - name: authentik-svc
+          port: 9443
+  tls:
+    secretName: authentik-ts-secret
