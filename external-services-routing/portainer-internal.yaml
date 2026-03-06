@@ -6,8 +6,8 @@ metadata:
 spec:
   ports:
     - name: web
-      port: 9443
-      targetPort: 9443
+      port: 8000
+      targetPort: 8000
   selector:
     app: portainer-internal-proxy
 ---
@@ -29,7 +29,7 @@ spec:
       containers:
       - name: socat
         image: alpine/socat
-        args: ["TCP-LISTEN:9443,fork", "TCP:192.168.3.2:9443"]
+        args: ["TCP-LISTEN:8000,fork", "TCP:192.168.3.2:8000"]
         resources:
           requests:
             cpu: "10m"
@@ -37,7 +37,7 @@ spec:
           limits:
             memory: "50Mi"
         ports:
-        - containerPort: 9443
+        - containerPort: 8000
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -66,6 +66,6 @@ spec:
       kind: Rule
       services:
         - name: portainer-internal-svc
-          port: 9443
+          port: 8000
   tls:
     secretName: portainer-internal-ts-secret
