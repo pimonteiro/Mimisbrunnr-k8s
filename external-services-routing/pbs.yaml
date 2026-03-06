@@ -54,6 +54,14 @@ spec:
   - "pbs.pimonlab.xyz"
 ---
 apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: pbs-transport
+  namespace: external-services
+spec:
+  insecureSkipVerify: true
+---
+apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: pbs-ingress
@@ -67,5 +75,7 @@ spec:
       services:
         - name: pbs-svc
           port: 8007
+          scheme: https 
+          serversTransport: pbs-transport
   tls:
     secretName: pbs-ts-secret
