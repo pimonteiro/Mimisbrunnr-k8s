@@ -150,7 +150,7 @@ data:
                 - type: group
                   widgets:
                     - type: monitor
-                      cache: 1m
+                      cache: 5m
                       title: Starr
                       sites:
                         - title: Sonarr
@@ -175,23 +175,19 @@ data:
                           url: https://jellystat.pimonlab.xyz
                           icon: sh:jellystat.png
 
-                - type: group
-                  widgets:
                     - type: monitor
-                      cache: 1m
-                      title: AudioBook/E-Book
+                      cache: 5m
+                      title: AudioBook & E-Book
                       sites:
-                        - title: Qbittorrent
+                        - title: Qbittorrent-2
                           url: https://qbit-2.pimonlab.xyz
                           icon: sh:qbittorrent
                         - title: Mousehole
                           url: http://192.168.3.2:5010
                           icon: sh:qbittorrent
 
-                - type: monitor
-
                     - type: monitor
-                      cache: 1m
+                      cache: 5m
                       title: Infrastructure
                       sites:
                         - title: Router PVE
@@ -227,7 +223,7 @@ data:
                         - title: Managed Switch
                           url: http://172.16.16.2
                           icon: sh:opnsense
-                        - title: UPS 
+                        - title: UPS
                           url: https://nut-server.pimonlab.xyz/cgi-bin/nut/upsstats.cgi
                           icon: sh:nutalert-dark
                         - title: Speedtest
@@ -235,7 +231,7 @@ data:
                           icon: sh:speedtest
 
                     - type: monitor
-                      cache: 1m
+                      cache: 5m
                       title: Monitoring
                       sites:
                         - title: Pulse
@@ -301,7 +297,6 @@ data:
                     - url: https://ishadeed.com/feed.xml
                       title: Ahmad Shadeed
 
-
             - size: full
               widgets:
                 - type: group
@@ -333,4 +328,3 @@ data:
                       name: Apple
                     - symbol: MSFT
                       name: Microsoft
-
