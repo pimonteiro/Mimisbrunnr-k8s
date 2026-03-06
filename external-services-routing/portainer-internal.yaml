@@ -6,8 +6,8 @@ metadata:
 spec:
   ports:
     - name: web
-      port: 8000
-      targetPort: 8000
+      port: 9443
+      targetPort: 9443
   selector:
     app: portainer-internal-proxy
 ---
@@ -29,7 +29,7 @@ spec:
       containers:
       - name: socat
         image: alpine/socat
-        args: ["TCP-LISTEN:8000,fork", "TCP:192.168.3.2:8000"]
+        args: ["TCP-LISTEN:9443,fork", "TCP:192.168.3.2:9443"]
         resources:
           requests:
             cpu: "10m"
@@ -37,7 +37,7 @@ spec:
           limits:
             memory: "50Mi"
         ports:
-        - containerPort: 8000
+        - containerPort: 9443
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -54,6 +54,14 @@ spec:
   - "portainer.internal.pimonlab.xyz"
 ---
 apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: portainer-internal-transport
+  namespace: external-services
+spec:
+  insecureSkipVerify: true
+---
+apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: portainer-internal-ingress
@@ -66,6 +74,8 @@ spec:
       kind: Rule
       services:
         - name: portainer-internal-svc
-          port: 8000
+          port: 9443
+          scheme: https 
+          serversTransport: portainer-internal-transport
   tls:
     secretName: portainer-internal-ts-secret
