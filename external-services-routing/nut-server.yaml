@@ -39,6 +39,19 @@ spec:
         ports:
         - containerPort: 80
 ---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: nut-redirect-middleware
+  namespace: external-services
+spec:
+  redirectRegex:
+    # Matches http:// or https:// + domain + optional trailing slash
+    regex: "^https?://([^/]+)/?$"
+    # Redirects to the CGI path
+    replacement: "https://${1}/cgi-bin/nut/upsstats.cgi"
+    permanent: true
+---
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
@@ -67,5 +80,7 @@ spec:
       services:
         - name: nut-server-svc
           port: 80
+      middlewares:
+        - name: nut-redirect-middleware
   tls:
     secretName: nut-server-ts-secret
