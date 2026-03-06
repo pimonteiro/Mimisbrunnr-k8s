@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pbs-svc
+  namespace: external-services
+spec:
+  ports:
+    - name: web
+      port: 8007
+      targetPort: 8007
+  selector:
+    app: pbs-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pbs-proxy
+  namespace: external-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pbs-proxy
+  template:
+    metadata:
+      labels:
+        app: pbs-proxy
+    spec:
+      containers:
+      - name: socat
+        image: alpine/socat
+        args: ["TCP-LISTEN:8007,fork", "TCP:192.168.2.4:8007"]
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "25Mi"
+          limits:
+            memory: "50Mi"
+        ports:
+        - containerPort: 8007
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: pbs-tls-cert
+  namespace: external-services
+spec:
+  secretName: pbs-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "pbs.pimonlab.xyz"
+  dnsNames:
+  - "pbs.pimonlab.xyz"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: pbs-ingress
+  namespace: external-services
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`pbs.pimonlab.xyz`)
+      kind: Rule
+      services:
+        - name: pbs-svc
+          port: 8007
+  tls:
+    secretName: pbs-ts-secret

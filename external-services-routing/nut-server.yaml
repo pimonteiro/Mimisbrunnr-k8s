@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nut-server-svc
+  namespace: external-services
+spec:
+  ports:
+    - name: web
+      port: 80
+      targetPort: 80
+  selector:
+    app: nut-server-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nut-server-proxy
+  namespace: external-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nut-server-proxy
+  template:
+    metadata:
+      labels:
+        app: nut-server-proxy
+    spec:
+      containers:
+      - name: socat
+        image: alpine/socat
+        args: ["TCP-LISTEN:80,fork", "TCP:172.16.16.12:80"]
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "25Mi"
+          limits:
+            memory: "50Mi"
+        ports:
+        - containerPort: 80
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: nut-server-tls-cert
+  namespace: external-services
+spec:
+  secretName: nut-server-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "nut-server.pimonlab.xyz"
+  dnsNames:
+  - "nut-server.pimonlab.xyz"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: nut-server-ingress
+  namespace: external-services
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`nut-server.pimonlab.xyz`)
+      kind: Rule
+      services:
+        - name: nut-server-svc
+          port: 80
+  tls:
+    secretName: nut-server-ts-secret

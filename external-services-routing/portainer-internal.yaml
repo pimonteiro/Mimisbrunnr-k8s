@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: portainer-internal-svc
+  namespace: external-services
+spec:
+  ports:
+    - name: web
+      port: 9000
+      targetPort: 9000
+  selector:
+    app: portainer-internal-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: portainer-internal-proxy
+  namespace: external-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: portainer-internal-proxy
+  template:
+    metadata:
+      labels:
+        app: portainer-internal-proxy
+    spec:
+      containers:
+      - name: socat
+        image: alpine/socat
+        args: ["TCP-LISTEN:9000,fork", "TCP:192.168.3.2:9000"]
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "25Mi"
+          limits:
+            memory: "50Mi"
+        ports:
+        - containerPort: 9000
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: portainer-internal-tls-cert
+  namespace: external-services
+spec:
+  secretName: portainer-internal-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "portainer.internal.pimonlab.xyz"
+  dnsNames:
+  - "portainer.internal.pimonlab.xyz"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: portainer-internal-ingress
+  namespace: external-services
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`portainer.internal.pimonlab.xyz`)
+      kind: Rule
+      services:
+        - name: portainer-internal-svc
+          port: 9000
+  tls:
+    secretName: portainer-internal-ts-secret

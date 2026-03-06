@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: thor-svc
+  namespace: external-services
+spec:
+  ports:
+    - name: web
+      port: 8006
+      targetPort: 8006
+  selector:
+    app: thor-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thor-proxy
+  namespace: external-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: thor-proxy
+  template:
+    metadata:
+      labels:
+        app: thor-proxy
+    spec:
+      containers:
+      - name: socat
+        image: alpine/socat
+        args: ["TCP-LISTEN:8006,fork", "TCP:172.16.16.11:8006"]
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "25Mi"
+          limits:
+            memory: "50Mi"
+        ports:
+        - containerPort: 8006
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: thor-tls-cert
+  namespace: external-services
+spec:
+  secretName: thor-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "thor.pimonlab.xyz"
+  dnsNames:
+  - "thor.pimonlab.xyz"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: thor-ingress
+  namespace: external-services
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`thor.pimonlab.xyz`)
+      kind: Rule
+      services:
+        - name: thor-svc
+          port: 8006
+  tls:
+    secretName: thor-ts-secret

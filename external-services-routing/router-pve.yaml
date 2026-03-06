@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: router-pve-svc
+  namespace: external-services
+spec:
+  ports:
+    - name: web
+      port: 8006
+      targetPort: 8006
+  selector:
+    app: router-pve-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: router-pve-proxy
+  namespace: external-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: router-pve-proxy
+  template:
+    metadata:
+      labels:
+        app: router-pve-proxy
+    spec:
+      containers:
+      - name: socat
+        image: alpine/socat
+        args: ["TCP-LISTEN:8006,fork", "TCP:192.168.1.200:8006"]
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "25Mi"
+          limits:
+            memory: "50Mi"
+        ports:
+        - containerPort: 8006
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: router-pve-tls-cert
+  namespace: external-services
+spec:
+  secretName: router-pve-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "router-pve.pimonlab.xyz"
+  dnsNames:
+  - "router-pve.pimonlab.xyz"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: router-pve-ingress
+  namespace: external-services
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`router-pve.pimonlab.xyz`)
+      kind: Rule
+      services:
+        - name: router-pve-svc
+          port: 8006
+  tls:
+    secretName: router-pve-ts-secret
