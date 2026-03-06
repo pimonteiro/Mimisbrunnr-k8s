@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: prowlarr-svc
+  name: prowlarr-private-svc
   namespace: external-services
 spec:
   ports:
@@ -9,22 +9,22 @@ spec:
       port: 9697
       targetPort: 9697
   selector:
-    app: prowlarr-proxy
+    app: prowlarr-private-proxy
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prowlarr-proxy
+  name: prowlarr-private-proxy
   namespace: external-services
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: prowlarr-proxy
+      app: prowlarr-private-proxy
   template:
     metadata:
       labels:
-        app: prowlarr-proxy
+        app: prowlarr-private-proxy
     spec:
       containers:
       - name: socat
@@ -42,10 +42,10 @@ spec:
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: prowlarr-tls-cert
+  name: prowlarr-private-tls-cert
   namespace: external-services
 spec:
-  secretName: prowlarr-ts-secret
+  secretName: prowlarr-private-ts-secret
   issuerRef:
     name: letsencrypt-prod
     kind: ClusterIssuer
@@ -56,7 +56,7 @@ spec:
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: prowlarr-ingress
+  name: prowlarr-private-ingress
   namespace: external-services
 spec:
   entryPoints:
@@ -65,7 +65,7 @@ spec:
     - match: Host(`prowlarr-2.pimonlab.xyz`)
       kind: Rule
       services:
-        - name: prowlarr-svc
+        - name: prowlarr-private-svc
           port: 9697
   tls:
-    secretName: prowlarr-ts-secret
+    secretName: prowlarr-private-ts-secret
