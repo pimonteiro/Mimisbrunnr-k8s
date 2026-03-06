@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: flaresolverr-svc
+  namespace: external-services
+spec:
+  ports:
+    - name: web
+      port: 8191
+      targetPort: 8191
+  selector:
+    app: flaresolverr-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flaresolverr-proxy
+  namespace: external-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flaresolverr-proxy
+  template:
+    metadata:
+      labels:
+        app: flaresolverr-proxy
+    spec:
+      containers:
+      - name: socat
+        image: alpine/socat
+        args: ["TCP-LISTEN:8191,fork", "TCP:192.168.3.2:8191"]
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "25Mi"
+          limits:
+            memory: "50Mi"
+        ports:
+        - containerPort: 8191
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: flaresolverr-tls-cert
+  namespace: external-services
+spec:
+  secretName: flaresolverr-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "flaresolverr.pimonlab.xyz"
+  dnsNames:
+  - "flaresolverr.pimonlab.xyz"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: flaresolverr-ingress
+  namespace: external-services
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`flaresolverr.pimonlab.xyz`)
+      kind: Rule
+      services:
+        - name: flaresolverr-svc
+          port: 8191
+  tls:
+    secretName: flaresolverr-ts-secret

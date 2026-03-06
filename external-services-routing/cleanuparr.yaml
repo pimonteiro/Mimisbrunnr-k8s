@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cleanuparr-svc
+  namespace: external-services
+spec:
+  ports:
+    - name: web
+      port: 11011
+      targetPort: 11011
+  selector:
+    app: cleanuparr-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cleanuparr-proxy
+  namespace: external-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cleanuparr-proxy
+  template:
+    metadata:
+      labels:
+        app: cleanuparr-proxy
+    spec:
+      containers:
+      - name: socat
+        image: alpine/socat
+        args: ["TCP-LISTEN:11011,fork", "TCP:192.168.3.2:11011"]
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "25Mi"
+          limits:
+            memory: "50Mi"
+        ports:
+        - containerPort: 11011
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cleanuparr-tls-cert
+  namespace: external-services
+spec:
+  secretName: cleanuparr-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "cleanuparr.pimonlab.xyz"
+  dnsNames:
+  - "cleanuparr.pimonlab.xyz"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: cleanuparr-ingress
+  namespace: external-services
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`cleanuparr.pimonlab.xyz`)
+      kind: Rule
+      services:
+        - name: cleanuparr-svc
+          port: 11011
+  tls:
+    secretName: cleanuparr-ts-secret

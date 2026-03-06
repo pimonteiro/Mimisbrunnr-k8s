@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: profilarr-svc
+  namespace: external-services
+spec:
+  ports:
+    - name: web
+      port: 6868
+      targetPort: 6868
+  selector:
+    app: profilarr-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: profilarr-proxy
+  namespace: external-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: profilarr-proxy
+  template:
+    metadata:
+      labels:
+        app: profilarr-proxy
+    spec:
+      containers:
+      - name: socat
+        image: alpine/socat
+        args: ["TCP-LISTEN:6868,fork", "TCP:192.168.3.2:6868"]
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "25Mi"
+          limits:
+            memory: "50Mi"
+        ports:
+        - containerPort: 6868
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: profilarr-tls-cert
+  namespace: external-services
+spec:
+  secretName: profilarr-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "profilarr.pimonlab.xyz"
+  dnsNames:
+  - "profilarr.pimonlab.xyz"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: profilarr-ingress
+  namespace: external-services
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`profilarr.pimonlab.xyz`)
+      kind: Rule
+      services:
+        - name: profilarr-svc
+          port: 6868
+  tls:
+    secretName: profilarr-ts-secret

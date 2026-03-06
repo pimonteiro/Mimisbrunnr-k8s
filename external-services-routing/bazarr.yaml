@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: bazarr-svc
+  namespace: external-services
+spec:
+  ports:
+    - name: web
+      port: 6767
+      targetPort: 6767
+  selector:
+    app: bazarr-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bazarr-proxy
+  namespace: external-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bazarr-proxy
+  template:
+    metadata:
+      labels:
+        app: bazarr-proxy
+    spec:
+      containers:
+      - name: socat
+        image: alpine/socat
+        args: ["TCP-LISTEN:6767,fork", "TCP:192.168.3.2:6767"]
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "25Mi"
+          limits:
+            memory: "50Mi"
+        ports:
+        - containerPort: 6767
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: bazarr-tls-cert
+  namespace: external-services
+spec:
+  secretName: bazarr-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "bazarr.pimonlab.xyz"
+  dnsNames:
+  - "bazarr.pimonlab.xyz"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: bazarr-ingress
+  namespace: external-services
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`bazarr.pimonlab.xyz`)
+      kind: Rule
+      services:
+        - name: bazarr-svc
+          port: 6767
+  tls:
+    secretName: bazarr-ts-secret
