@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: immich-svc
+  namespace: external-services
+spec:
+  ports:
+    - name: web
+      port: 2283
+      targetPort: 2283
+  selector:
+    app: immich-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: immich-proxy
+  namespace: external-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: immich-proxy
+  template:
+    metadata:
+      labels:
+        app: immich-proxy
+    spec:
+      containers:
+      - name: socat
+        image: alpine/socat
+        args: ["TCP-LISTEN:2283,fork", "TCP:192.168.10.101:2283"]
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "25Mi"
+          limits:
+            memory: "50Mi"
+        ports:
+        - containerPort: 2283
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: immich-tls-cert
+  namespace: external-services
+spec:
+  secretName: immich-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "immich.pimonlab.xyz"
+  dnsNames:
+  - "immich.pimonlab.xyz"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: immich-ingress
+  namespace: external-services
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`immich.pimonlab.xyz`)
+      kind: Rule
+      services:
+        - name: immich-svc
+          port: 2283
+  tls:
+    secretName: immich-ts-secret

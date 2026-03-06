@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-svc
+  namespace: external-services
+spec:
+  ports:
+    - name: web
+      port: 3000
+      targetPort: 3000
+  selector:
+    app: grafana-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: grafana-proxy
+  namespace: external-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: grafana-proxy
+  template:
+    metadata:
+      labels:
+        app: grafana-proxy
+    spec:
+      containers:
+      - name: socat
+        image: alpine/socat
+        args: ["TCP-LISTEN:3000,fork", "TCP:192.168.6.11:3000"]
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "25Mi"
+          limits:
+            memory: "50Mi"
+        ports:
+        - containerPort: 3000
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: grafana-tls-cert
+  namespace: external-services
+spec:
+  secretName: grafana-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "grafana.pimonlab.xyz"
+  dnsNames:
+  - "grafana.pimonlab.xyz"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: grafana-ingress
+  namespace: external-services
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`grafana.pimonlab.xyz`)
+      kind: Rule
+      services:
+        - name: grafana-svc
+          port: 3000
+  tls:
+    secretName: grafana-ts-secret

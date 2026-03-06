@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: immich-tools-svc
+  namespace: external-services
+spec:
+  ports:
+    - name: web
+      port: 8001
+      targetPort: 8001
+  selector:
+    app: immich-tools-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: immich-tools-proxy
+  namespace: external-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: immich-tools-proxy
+  template:
+    metadata:
+      labels:
+        app: immich-tools-proxy
+    spec:
+      containers:
+      - name: socat
+        image: alpine/socat
+        args: ["TCP-LISTEN:8001,fork", "TCP:192.168.10.101:8001"]
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "25Mi"
+          limits:
+            memory: "50Mi"
+        ports:
+        - containerPort: 8001
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: immich-tools-tls-cert
+  namespace: external-services
+spec:
+  secretName: immich-tools-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "immich-tools.pimonlab.xyz"
+  dnsNames:
+  - "immich-tools.pimonlab.xyz"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: immich-tools-ingress
+  namespace: external-services
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`immich-tools.pimonlab.xyz`)
+      kind: Rule
+      services:
+        - name: immich-tools-svc
+          port: 8001
+  tls:
+    secretName: immich-tools-ts-secret
