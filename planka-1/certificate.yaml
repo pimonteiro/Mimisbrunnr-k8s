@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: planka-tls-cert
+  namespace: planka-1
+spec:
+  secretName: planka-tls-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "planka.pimonlab.xyz"
+  dnsNames:
+  - "planka.pimonlab.xyz"
