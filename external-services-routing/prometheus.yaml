@@ -6,8 +6,8 @@ metadata:
 spec:
   ports:
     - name: web
-      port: 9090
-      targetPort: 9090
+      port: 8428
+      targetPort: 8428
   selector:
     app: prometheus-proxy
 ---
@@ -29,7 +29,7 @@ spec:
       containers:
       - name: socat
         image: alpine/socat
-        args: ["TCP-LISTEN:9090,fork", "TCP:192.168.6.15:9090"]
+        args: ["TCP-LISTEN:8428,fork", "TCP:192.168.6.15:8428"]
         resources:
           requests:
             cpu: "10m"
@@ -37,7 +37,7 @@ spec:
           limits:
             memory: "50Mi"
         ports:
-        - containerPort: 9090
+        - containerPort: 8428
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -66,6 +66,6 @@ spec:
       kind: Rule
       services:
         - name: prometheus-svc
-          port: 9090
+          port: 8428
   tls:
     secretName: prometheus-ts-secret
