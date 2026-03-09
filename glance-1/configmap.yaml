@@ -97,6 +97,9 @@ data:
                     - title: Hoarder
                       url: https://hoarder.pimonlab.xyz
                       icon: sh:hoarder
+                    - title: Planka
+                      url: https://planka.pimonlab.xyz
+                      icon: sh:planka
 
                 - type: monitor
                   cache: 1m
