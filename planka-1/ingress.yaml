@@ -13,6 +13,6 @@ spec:
       services:
         - name: planka-1
           namespace: planka-1
-          port: 80
+          port: 1337
   tls:
     secretName: planka-tls-secret
