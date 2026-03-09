@@ -1,0 +1,17 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: planka-1-oidc-aut
+  namespace: glance-1
+spec:
+  encryptedData:
+    clientId: AgCYPyYjSqwowm/hQ5Rvg7k+EYLLp3RsU/h7yHB5v+mwI8dJLO8b6viM/BhGKbr9GsaMi9aMJ4tYpVJ1sZ0/5Z57Hs8ukM4X1vf9fc5IhXq26YXHp6/AXbOazYsHUyRGZqZiIPU4GVSw2648uW8NcuhvEDzKBeUEQeeMCyklnvBhYk7jyduBEk1PSRqchaPv418/T7JagpwI/fDsCHBcTGSZsuxCU0Hm/P9e7vvEqyOD2YQjc70VS8RgJpKFpnxT7LdTSyEY3w24SIwms/rTfbALde2tP5mXSQ3ZhFWTL4fAGLmyYQ/74Fp/EGwRDf/weJ68jBcix9zNgInqxvzrmQ1Hw7XTVjmVzJp01sE+uqLGu05tv+xSy9KW3bdWe2nL+dzRGeIdU03ICQtRi9m+U1iu6fM2Xe8QaF1dk6YRiFxSBLvIs1ofKkNUVSWlU0iX7rL//sWsMLirgTKhe8PT10XEecKkT8nmLMiqVokTSQN4eAzyu1EiraC2n0pqReQJbTO/OQ1dHsrFOATjmHOALXMwcaaRnHmlGjdwpNttiVIcubiNKqrDrusZMfeyib3XwIMEElP5OuIWAOtTrSJZ+U0I5slt21KcrpEHT1jMFPViJEGsaFQKESHevrak8MOL3YYCcgrXQoF4bwE0aQSqZONNqkgPk7B/teSBqIarc6IdDG6uYM6B/kuxnPKPFpmV6O3WG+PvbUfepABrwR4TZJJ0CgkTCwm5bJk7EJvFfVPe3JxIIOw6SpuK
+    clientSecret: AgCY60FtlNfCr9qDdbaRxB4hpS7o1edrCceRnkB2LM+D5+2+v6l6bQDdNTvS6kQmkG7vKo3+5yo5I/R0jd8t6CfzqW6SaixeUyheSBncKC6wtCysURa1tzsMqZODluf1Xo2/4xtKJz0r1OMcDv/YzOE9zWVGBDH9cFnKGkiabuKo2wuIdWbsuIEF9kj/PGnx0ReYMurQdlGHe4zo+wyuFku/3P57fIA0FWA3KtQAzkFrMaK9eM/9geMdbhKE75sCjFdLkf0y6wGx4fW9IhKZ4A0TZc7fBAfnXVwXsqL/15ZBY/OFV8QQZ9zehf63/6iUMG/gNYJdXQ4ElI3AcYa7kSEQ3vLzTVloLTHOx4ubzZ5H1hsZc+Of10hk5lTPtCphxvDYn53mdSQ+QbncFkc/HTw/OicaX/F2DV5HXbOj3yHAk/CQUipDt3Q5YSkmuUUfjhDifKbiiyACnrrd1M8a/rzqGmVPH9n6e4PF4P58A9s9pUfMPXo6suC+1FDc//DA3ll77jaGOaBfDtjZLujJkSBKNfigZ30oyt/k6pmBRUHhStgKsRaFapUWFjCM+79c7IseU9nrW3T/aKJA/DpN6/HHIgfc+2MPCnBTa87Nbh4qTkLLnRVeRUUBy2A51YO4Zs5Z7f0fvsu8o83mfD3r+N1oHZl13KsYdlfhoShISQQEP+V1EbUXkyuSyM4hXNT8ggeNd5zGrv4nn/szrUfy8DIzuOM9D/+2KW0M4OKvEbMYTUOJIe8lnLmnj5DeM0WP33lPRBGrTWaCYRDsIxAOKfMmkX9E6mEV46o4gg5mkOAczuSNBx/zx75T2cut/Isxqzvm/0g+hMO3s8RpKLBR42UbVQWq9M5VUtV2A69mYSf3ig==
+  template:
+    metadata:
+      annotations:
+        reloader.stakater.com/match: "true"
+      name: planka-1-oidc-aut
+      namespace: glance-1
+    type: Opaque
