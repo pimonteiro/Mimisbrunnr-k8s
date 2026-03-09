@@ -2,7 +2,7 @@
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
 metadata:
-  name: planka-1-oidc-aut
+  name: planka-1-oidc-auth
   namespace: glance-1
 spec:
   encryptedData:
