@@ -29,8 +29,8 @@ spec:
       containers:
       - name: socat
         image: alpine/socat
-        # Listen on 13378 inside the pod, forward to 192.168.3.2:13378
-        args: ["TCP-LISTEN:13378,fork", "TCP:192.168.3.2:13378"]
+        # Listen on 13378 inside the pod, forward to 192.168.7.40:13378
+        args: ["TCP-LISTEN:13378,fork", "TCP:192.168.7.40:13378"]
         resources:
           requests:
             cpu: "10m"
