@@ -1,0 +1,171 @@
+---
+# - name: Graceful Kubernetes Cluster Shutdown for Maintenance - Workers
+#   hosts: workers
+#   become: yes
+#   serial: 1
+#   ignore_unreachable: yes
+
+#   tasks:
+#     # 1. Pre-shutdown checks (run on first node only)
+#     - name: Pre-shutdown checks
+#       block:
+#         - name: Check for running pods
+#           shell: "kubectl get pods -A --no-headers | wc -l"
+#           register: pod_count
+#           delegate_to: localhost
+#           become: no
+
+#         - name: Display pod count
+#           debug:
+#             msg: "Total pods running: {{ pod_count.stdout }}"
+#           delegate_to: localhost
+#           become: no
+
+#         - name: Warn user about shutdown
+#           pause:
+#             prompt: |
+#               ⚠️  WARNING: Kubernetes cluster shutdown starting
+#               Total pods: {{ pod_count.stdout }}
+              
+#               Nodes will be drained then shutdown.
+#               Press ENTER to continue or Ctrl+C to cancel
+            
+#       run_once: true
+#       delegate_to: localhost
+#       become: no
+
+#     # 2. Cordon the node (prevent new pods from being scheduled)
+#     - name: Cordon the node
+#       command: "kubectl cordon {{ inventory_hostname }}"
+#       delegate_to: localhost
+#       become: no
+
+#     # 3. Drain the node (gracefully evict all pods)
+#     - name: Drain the node gracefully
+#       command: >
+#         kubectl drain {{ inventory_hostname }} 
+#         --ignore-daemonsets 
+#         --disable-eviction
+#         --delete-emptydir-data 
+#         --force 
+#         --grace-period=60
+#         --timeout=300s
+#       delegate_to: localhost
+#       become: no
+#       register: drain_result
+#       failed_when: 
+#         - drain_result.rc != 0
+#         - "'already cordoned' not in drain_result.stderr"
+
+#     - name: Check for remaining pods (should only be DaemonSets)
+#       shell: "kubectl get pods --field-selector=spec.nodeName={{ inventory_hostname }} -A --no-headers"
+#       register: remaining_pods
+#       delegate_to: localhost
+#       become: no
+
+#     - name: Verify node is drained
+#       debug:
+#         msg: |
+#           Node {{ inventory_hostname }} successfully drained.
+#           Remaining pods (expected to be DaemonSets only):
+#           {{ remaining_pods.stdout }}
+
+#     # 4. Final check before shutdown
+#     - name: Confirm before shutdown
+#       pause:
+#         prompt: |
+#           Node {{ inventory_hostname }} is drained and ready for shutdown.
+#           Press ENTER to shutdown this node or Ctrl+C to cancel
+#         seconds: 30
+#       when: not ansible_check_mode
+
+#     # 5. Shutdown the node
+#     - name: Shutdown node - {{ inventory_hostname }}
+#       command: shutdown -h now
+#       async: 1
+#       poll: 0
+#       ignore_errors: yes
+#       when: not ansible_check_mode
+
+#     # 6. Wait for node to be unreachable
+#     - name: Wait for node to shutdown
+#       wait_for:
+#         host: "{{ inventory_hostname }}"
+#         port: 22
+#         state: stopped
+#         timeout: 120
+#       delegate_to: localhost
+#       become: no
+#       ignore_errors: yes
+
+- name: Graceful Kubernetes Cluster Shutdown for Maintenance - Control Plane
+  hosts: masters
+  become: yes
+  serial: 1
+  ignore_unreachable: yes
+
+  tasks:
+    # 2. Cordon the node (prevent new pods from being scheduled)
+    - name: Cordon the node
+      command: "kubectl cordon {{ inventory_hostname }}"
+      delegate_to: localhost
+      become: no
+      ignore_errors: yes
+
+    # 3. Drain the node (gracefully evict all pods)
+    - name: Drain the node gracefully
+      command: >
+        kubectl drain {{ inventory_hostname }} 
+        --ignore-daemonsets 
+        --disable-eviction
+        --delete-emptydir-data 
+        --force 
+        --grace-period=60
+        --timeout=300s
+      delegate_to: localhost
+      become: no
+      register: drain_result
+      failed_when: false
+      ignore_errors: yes
+
+    - name: Check for remaining pods (should only be DaemonSets)
+      shell: "kubectl get pods --field-selector=spec.nodeName={{ inventory_hostname }} -A --no-headers"
+      register: remaining_pods
+      delegate_to: localhost
+      become: no
+      ignore_errors: yes
+
+    - name: Verify node is drained
+      debug:
+        msg: |
+          Control plane node {{ inventory_hostname }} is being shutdown.
+          (kubectl operations may timeout if the API server is already down)
+      when: remaining_pods is skipped or remaining_pods.rc != 0
+
+    # 4. Final check before shutdown
+    - name: Confirm before shutdown
+      pause:
+        prompt: |
+          Control plane node {{ inventory_hostname }} is drained and ready for shutdown.
+          Press ENTER to shutdown this node or Ctrl+C to cancel
+        seconds: 30
+      when: not ansible_check_mode
+
+    # 5. Shutdown the node
+    - name: Shutdown control plane node - {{ inventory_hostname }}
+      command: shutdown -h now
+      async: 1
+      poll: 0
+      ignore_errors: yes
+      when: not ansible_check_mode
+
+    # 6. Wait for node to be unreachable
+    - name: Wait for node to shutdown
+      wait_for:
+        host: "{{ inventory_hostname }}"
+        port: 22
+        state: stopped
+        timeout: 120
+      delegate_to: localhost
+      become: no
+      ignore_errors: yes
