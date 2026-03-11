@@ -29,7 +29,7 @@ spec:
       containers:
       - name: socat
         image: alpine/socat
-        args: ["TCP-LISTEN:7000,fork", "TCP:192.168.10.100:7000"]
+        args: ["TCP-LISTEN:7000,fork", "TCP:192.168.3.10:7000"]
         resources:
           requests:
             cpu: "10m"
