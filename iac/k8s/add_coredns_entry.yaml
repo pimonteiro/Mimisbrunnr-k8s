@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: coredns-custom
+  namespace: kube-system
+data:
+  # The *.override suffix tells K3s to inject this into the main server block
+  authentik.override: |
+    rewrite name authentik.pimonlab.xyz traefik.kube-system.svc.cluster.local
