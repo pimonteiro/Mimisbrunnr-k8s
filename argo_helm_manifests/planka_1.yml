@@ -1,0 +1,75 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: planka-1
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://plankanban.github.io/planka
+      chart: planka
+      targetRevision: 2.0.3
+      helm:
+        values: |
+          secretkey: "7a62ac547d5d29fe4571956713d4d1427c1186be6673d629670ceddf9d614efe7bc03c36f1d99be203db8f3ee61c16df086d782b7f0176f1c9e38f7cf708431d"
+
+          # Define default admin user (Change these immediately after login!)
+          admin_email: "admin@example.com"
+          admin_password: "ChangeMe123!"
+          admin_name: "Admin User"
+          admin_username: "admin"
+
+          podSecurityContext:
+            fsGroup: 1000
+            fsGroupChangePolicy: "OnRootMismatch"
+
+          oidc:
+            enabled: true
+            existingSecret: "planka-1-oidc-auth"
+            issuerUrl: "https://authentik.pimonlab.xyz/application/o/planka/"
+            admin:
+              rolesAttribute: groups
+              roles: 
+                - "Planka Admins"
+
+          baseUrl: "https://planka.pimonlab.xyz"
+
+          ingress:
+            enabled: false
+
+          postgresql:
+            enabled: true
+            auth:
+              password: "StrongDatabasePassword123!"
+              postgresPassword: "StrongDatabasePassword123!"
+
+            primary:
+              persistence:
+                enabled: true
+                storageClass: "truenas-iscsi" #
+                size: 5Gi
+
+            persistence:
+              enabled: true
+              storageClass: "truenas-iscsi"
+              size: 5Gi
+
+          persistence:
+            enabled: true
+            size: 3Gi
+            storageClass: truenas-nfs
+
+    - repoURL: 'https://github.com/pimonteiro/Mimisbrunnr-k8s.git'
+      targetRevision: HEAD
+      path: planka-1
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: planka-1
+  
+  # Sync Policy: Create namespace automatically if it doesn't exist
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
