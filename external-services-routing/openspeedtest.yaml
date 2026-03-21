@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: openspeedtest-svc
+  namespace: external-services
+spec:
+  ports:
+    - name: web
+      port: 3000
+      targetPort: 3000
+  selector:
+    app: openspeedtest-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openspeedtest-proxy
+  namespace: external-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openspeedtest-proxy
+  template:
+    metadata:
+      labels:
+        app: openspeedtest-proxy
+    spec:
+      containers:
+      - name: socat
+        image: alpine/socat
+        args: ["TCP-LISTEN:3000,fork", "TCP:192.168.7.40:3000"]
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "25Mi"
+          limits:
+            memory: "50Mi"
+        ports:
+        - containerPort: 3000
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: openspeedtest-tls-cert
+  namespace: external-services
+spec:
+  secretName: openspeedtest-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "openspeedtest-7.pimonlab.xyz"
+  dnsNames:
+  - "openspeedtest-7.pimonlab.xyz"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: openspeedtest-ingress
+  namespace: external-services
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`openspeedtest-7.pimonlab.xyz`)
+      kind: Rule
+      services:
+        - name: openspeedtest-svc
+          port: 3000
+  tls:
+    secretName: openspeedtest-ts-secret
