@@ -6,8 +6,8 @@ metadata:
 spec:
   ports:
     - name: web
-      port: 8000
-      targetPort: 8000
+      port: 8423
+      targetPort: 8423
   selector:
     app: paperless-proxy
 ---
@@ -29,7 +29,7 @@ spec:
       containers:
       - name: socat
         image: alpine/socat
-        args: ["TCP-LISTEN:8000,fork", "TCP:192.168.7.40:8000"]
+        args: ["TCP-LISTEN:8423,fork", "TCP:192.168.7.40:8423"]
         resources:
           requests:
             cpu: "10m"
@@ -37,7 +37,7 @@ spec:
           limits:
             memory: "50Mi"
         ports:
-        - containerPort: 8000
+        - containerPort: 8423
 ---
 apiVersion: cert-manager.io/v1
 kind: Certificate
@@ -66,6 +66,6 @@ spec:
       kind: Rule
       services:
         - name: paperless-svc
-          port: 8000
+          port: 8423
   tls:
     secretName: paperless-ts-secret
