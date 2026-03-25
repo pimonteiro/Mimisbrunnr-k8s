@@ -103,6 +103,17 @@ data:
 
                 - type: monitor
                   cache: 1m
+                  title: Kubernetes
+                  sites:
+                    - title: ArgoCD
+                      url: https://argocd.pimonlab.xyz
+                      icon: sh:argo-cd
+                    - title: Rancher
+                      url: https://rancher.pimonlab.xyz
+                      icon: sh:rancher
+
+                - type: monitor
+                  cache: 1m
                   title: Other Services
                   sites:
                     - title: Pangolin
