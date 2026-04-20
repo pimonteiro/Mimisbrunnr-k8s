@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: old-man-drawio-tls-cert
+  namespace: old-man-drawio-1
+spec:
+  secretName: old-man-drawio-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "draw.pimonlab.xyz"
+  dnsNames:
+  - "draw.pimonlab.xyz"

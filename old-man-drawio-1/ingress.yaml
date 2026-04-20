@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: old-man-drawio
+  namespace: old-man-drawio-1
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`draw.pimonlab.xyz`)
+      services:
+        - name: old-man-drawio
+          port: 80
+  tls:
+    secretName: old-man-drawio-ts-secret

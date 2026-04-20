@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: old-man-drawio
+  namespace: old-man-drawio-1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: old-man-drawio
+  template:
+    metadata:
+      labels:
+        app: old-man-drawio
+    spec:
+      containers:
+      - name: old-man-drawio
+        image: ghcr.io/pimonteiro/old-man-drawio:main
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "32Mi"
+          limits:
+            cpu: "100m"
+            memory: "128Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: old-man-drawio
+  namespace: old-man-drawio-1
+spec:
+  selector:
+    app: old-man-drawio
+  ports:
+  - port: 80
+    targetPort: 80
