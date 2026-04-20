@@ -25,16 +25,9 @@ spec:
         effect: "NoExecute"
         tolerationSeconds: 30
       volumes:
-        - name: training-data
-          emptyDir: {}
-        - name: extra-configs
-          emptyDir: {}
-        - name: custom-files
-          emptyDir: {}
-        - name: logs
-          emptyDir: {}
-        - name: pipeline
-          emptyDir: {}
+        - name: configs
+          persistentVolumeClaim:
+            claimName: pdf-starling-1-configs-pvc
       containers:
         - name: pdf-starlingy
           image: docker.stirlingpdf.com/stirlingtools/stirling-pdf:latest
@@ -46,16 +39,21 @@ spec:
             - name: LANGS
               value: "en_GB,pt_PT"
           volumeMounts:
-            - name: training-data
+            - name: configs
               mountPath: /usr/share/tessdata
-            - name: extra-configs
+              subPath: tessdata
+            - name: configs
               mountPath: /configs
-            - name: custom-files
+              subPath: configs
+            - name: configs
               mountPath: /customFiles
-            - name: logs
+              subPath: customFiles
+            - name: configs
               mountPath: /logs
-            - name: pipeline
+              subPath: logs
+            - name: configs
               mountPath: /pipeline
+              subPath: pipeline
           livenessProbe:
             exec:
               command:
