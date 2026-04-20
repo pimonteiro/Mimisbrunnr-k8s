@@ -17,6 +17,9 @@ spec:
           config:
             persistence:
               existingClaim: "seer-1-data-pvc"
+          extraEnv:
+            - name: OVERSEERR_ADMIN_USER
+              value: "admin"
 
     - repoURL: 'https://github.com/pimonteiro/Mimisbrunnr-k8s.git'
       targetRevision: HEAD
