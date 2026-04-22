@@ -16,6 +16,7 @@ spec:
       containers:
       - name: old-man-drawio
         image: ghcr.io/pimonteiro/old-man-drawio:main
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
         resources:
