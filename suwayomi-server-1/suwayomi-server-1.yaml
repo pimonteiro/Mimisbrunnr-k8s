@@ -38,6 +38,7 @@ spec:
         runAsUser: 1000
         runAsGroup: 1000
         fsGroup: 1000 # This tells k8s to chown the volume to group 1000
+        fsGroupChangePolicy: "OnRootMismatch"
       tolerations:
         - key: "node.kubernetes.io/unreachable"
           operator: "Exists"
