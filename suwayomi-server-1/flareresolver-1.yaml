@@ -13,8 +13,6 @@ spec:
       labels:
         app: flaresolverr-1
     spec:
-      nodeSelector:
-        longhorn: "true"
       containers:
       - name: flaresolverr-1
         image: ghcr.io/flaresolverr/flaresolverr:latest
