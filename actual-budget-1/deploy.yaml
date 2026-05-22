@@ -1,0 +1,73 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: actual-budget-1
+  namespace: actual-budget-1
+spec:
+  replicas: 1
+  revisionHistoryLimit: 2
+  strategy:
+    type: Recreate 
+  selector:
+    matchLabels:
+      app: actual-budget-1
+  template:
+    metadata:
+      labels:
+        app: actual-budget-1
+      annotations:
+        reloader.stakater.com/auto: "true"
+    spec:
+      tolerations:
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 30
+      volumes:
+        - name: configs
+          persistentVolumeClaim:
+            claimName: actual-budget-1-data-pvc
+      containers:
+        - name: actual-budget
+          image: ghcr.io/pimonteiro/actual-server:sha-ada6226@sha256:1abe167ea9b02b49161e8258fecefc796a628bd504389c5de9e62b9e7f0de15f
+          ports:
+          - containerPort: 5006
+          volumeMounts:
+            - name: configs
+              mountPath: /data
+          livenessProbe:
+            httpGet:
+              path: / # Or the specific health check path for Suwayomi
+              port: 5006
+            initialDelaySeconds: 60 # Give it time to boot
+            periodSeconds: 15
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 5006
+            initialDelaySeconds: 30
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "200Mi"
+            limits:
+              cpu: "400m"
+              memory: "800Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: actual-budget-1
+  namespace: actual-budget-1
+spec:
+  type: ClusterIP
+  selector:
+    app: actual-budget-1
+  ports:
+  - port: 80
+    targetPort: 5006
