@@ -76,6 +76,8 @@ data:
                     - title: Immich
                       url: https://immich.pimonlab.xyz
                       icon: sh:immich
+                    - title: Actual Budget
+                      url: https://actual-budget.pimonlab.xyz
                     - title: Immich Tools
                       url: https://immich-tools.pimonlab.xyz/
                       icon: sh:immich-power-tools
@@ -243,6 +245,9 @@ data:
                         - title: Speedtest
                           url: https://speedtracker.pimonlab.xyz
                           icon: sh:speedtest
+                        - title: Scanopy
+                          url: https://scanopy.pimonlab.xyz
+                          icon: sh:scanopy
 
                     - type: monitor
                       cache: 5m
