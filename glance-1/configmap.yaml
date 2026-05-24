@@ -78,6 +78,7 @@ data:
                       icon: sh:immich
                     - title: Actual Budget
                       url: https://actual-budget.pimonlab.xyz
+                      icon: sh:actual-budget
                     - title: Immich Tools
                       url: https://immich-tools.pimonlab.xyz/
                       icon: sh:immich-power-tools
