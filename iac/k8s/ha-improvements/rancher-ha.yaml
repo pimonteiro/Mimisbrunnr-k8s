@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rancher
+  namespace: cattle-system
+spec:
+  replicas: 3
+  template:
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: app
+                operator: In
+                values:
+                - rancher
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+      - name: rancher
+        startupProbe:
+          failureThreshold: 30 # Increased from default to handle slow starts on low resource nodes
+          periodSeconds: 10

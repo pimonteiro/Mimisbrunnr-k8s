@@ -1,0 +1,28 @@
+---
+- name: Audit cluster for disk pressure and log errors
+  hosts: all
+  become: true
+  tasks:
+    - name: Check disk usage on / partition
+      shell: df -h / | tail -n 1 | awk '{print $5}' | sed 's/%//'
+      register: disk_usage
+      changed_when: false
+
+    - name: Check for large syslog files (>1GB)
+      shell: find /var/log/syslog* -size +1G -exec ls -lh {} + || echo "No large syslogs"
+      register: large_syslogs
+      changed_when: false
+
+    - name: Check for "UnmountVolume failed" error in logs
+      shell: grep -i "UnmountVolume failed" /var/log/syslog | tail -n 5 || echo "No mount errors"
+      register: mount_errors
+      changed_when: false
+
+    - name: Report node status
+      debug:
+        msg:
+          - "Node: {{ inventory_hostname }}"
+          - "Disk Usage: {{ disk_usage.stdout }}%"
+          - "Large Logs: {{ large_syslogs.stdout }}"
+          - "Recent Mount Errors: {{ mount_errors.stdout_lines }}"
+      when: disk_usage.stdout|int > 80 or large_syslogs.stdout != "No large syslogs" or mount_errors.stdout != "No mount errors"

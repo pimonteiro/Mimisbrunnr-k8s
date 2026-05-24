@@ -1,0 +1,28 @@
+---
+- name: Update logrotate settings for rsyslog
+  hosts: all
+  become: true
+  tasks:
+    - name: Configure rsyslog logrotate to be more aggressive
+      copy:
+        dest: /etc/logrotate.d/rsyslog
+        content: |
+          /var/log/syslog
+          /var/log/mail.log
+          /var/log/kern.log
+          /var/log/auth.log
+          /var/log/user.log
+          /var/log/cron.log
+          {
+                  rotate 7
+                  daily
+                  size 500M
+                  missingok
+                  notifempty
+                  compress
+                  delaycompress
+                  sharedscripts
+                  postrotate
+                          /usr/lib/rsyslog/rsyslog-rotate
+                  endscript
+          }

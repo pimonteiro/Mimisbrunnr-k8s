@@ -1,0 +1,14 @@
+---
+- name: Periodic Cluster Maintenance - Image Cleanup
+  hosts: all
+  become: true
+  tasks:
+    - name: Prune unused container images
+      shell: k3s crictl rmi --prune
+      register: prune_output
+      changed_when: "'Deleted:' in prune_output.stdout"
+
+    - name: Report space reclaimed
+      debug:
+        msg: "Node {{ inventory_hostname }}: {{ prune_output.stdout_lines | length }} images/layers removed."
+      when: prune_output.changed
