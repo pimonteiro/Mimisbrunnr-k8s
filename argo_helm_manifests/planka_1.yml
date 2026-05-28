@@ -11,6 +11,7 @@ spec:
       targetRevision: 2.0.3
       helm:
         values: |
+          replicaCount: 1
           secretkey: "7a62ac547d5d29fe4571956713d4d1427c1186be6673d629670ceddf9d614efe7bc03c36f1d99be203db8f3ee61c16df086d782b7f0176f1c9e38f7cf708431d"
 
           # Define default admin user (Change these immediately after login!)

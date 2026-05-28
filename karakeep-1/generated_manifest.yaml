@@ -22,7 +22,7 @@ metadata:
 apiVersion: v1
 data:
   MEILI_MASTER_KEY: MiVaR2pVVU5uQTJLYndIWXhVdmdtYmI5TGt4JkVXQ2dqdVh2
-  NEXT_PUBLIC_SECRET: Im1FN1RsRFA4eG5HMnZ0YmdYMmkrc3BxaG9zcy9NMTdLOEozam9vK3dNdktZcm9mSjQi
+  NEXT_PUBLIC_SECRET: Im1FN1RsRFA4eG5HMnZ0YmdYMmkrc3BxaG9zcy9NMTdLOEozam9vK3dNdktZcm9mSjQih
   NEXTAUTH_SECRET: MiVaR2pVVU5uQTJLYndIWXhVdmdtYmI5TGt4JkVXQ2dqdVh2
   OAUTH_CLIENT_SECRET: |
     SFE3WkFObjU1RXd0TUZWUVFwWE5yU21jbGUyU2tvdlp0OWpTM0ZWcnpMZ2hsdTE4RUNidT
@@ -160,6 +160,17 @@ spec:
           value: http://chrome:9222
         - name: DATA_DIR
           value: /data
+        - name: OPENAI_BASE_URL
+          value: https://openrouter.ai/api/v1
+        - name: INFERENCE_TEXT_MODEL
+          value: nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free
+        - name: INFERENCE_IMAGE_MODEL
+          value: nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free
+        - name: OPENAI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: karakeep-1-openrouter-apikey
+              key: password
         envFrom:
         - secretRef:
             name: karakeep-1-secrets-mgbdt9dk8d

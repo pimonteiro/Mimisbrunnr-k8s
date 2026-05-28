@@ -1,0 +1,16 @@
+---
+apiVersion: bitnami.com/v1alpha1
+kind: SealedSecret
+metadata:
+  name: karakeep-1-openrouter-apikey
+  namespace: karakeep-1
+spec:
+  encryptedData:
+    password: AgAu1bVCzkmJzSUZSoHefqkIJbJ8P9OCYZ6Wo2TmuhUORAhnGn23uQxxleJGsb68gp9nqeLhfOQBF2ghuTWShT6sZn4f8To08fhJqdrej1FA2kigk+ImeofFQEv9z7YlbRPS+4NaTZfXzOP1WousrifT1RB2ui+xBq+4TJTZENLWxy6T2pwSVjnLDakFXpui7IST6qXW5H8J36UCuJTvQDNsKsH9yzzKGytJdcmaLgU9OsKSEQEc/p4MzLnun16rlqYIxFyuS561q3bTda+/Q+7iFBZSESG2iw3OSbx1fNgiWHqfX5bcZr60iBcMNvwOx7DgiO0MtsIaOMQGamUGdbow0rEHHthSytWSgO10Pz1PKGqwkp5/9MFemNmM7dgkgzDXafS5FXz1k6NJq6/0DZzEt3e3cNG1TT79dMp1fSHuqh0UaF9FMNoCbmWdlQxT5HPRc+81IERcv+x6x7Q3tGsud4mbPYYu8InLIFIZofS0jibv2UcvEFa0wDNEfzXST3svhORAZ6XGXuxaSdRrlZky3tflFkHNN3Va1r0ox0jV4KZpiwHb3ma6NVb0rvgAPrLL9hck/mQudptMnwPOLFj2l/LH+Vfx4ix5nSdVV+i/nHyxOK2L8KyasKcbb3F4OSrfB93QUfKo0RpPGYB385HhAQU24APzEWRwHIWaybpVNN/8wAKzDyeFE6N6d6Hkc0/Kcj7u4AyEqh/yiSsQw269McDuC9Xx+8qH7333eGkjMfDVNGAsTIeC32433xJfbp53u8dzH3Rk4+OQ7KyIYE/nGCPr5X+3ic71
+  template:
+    metadata:
+      annotations:
+        reloader.stakater.com/match: "true"
+      name: karakeep-1-openrouter-apikey
+      namespace: karakeep-1
+    type: Opaque
