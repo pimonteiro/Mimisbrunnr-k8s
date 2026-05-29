@@ -33,7 +33,7 @@ spec:
             claimName: actual-budget-1-data-pvc
       containers:
         - name: actual-budget
-          image: ghcr.io/pimonteiro/actual-server:sha-ada6226@sha256:1abe167ea9b02b49161e8258fecefc796a628bd504389c5de9e62b9e7f0de15f
+          image: ghcr.io/pimonteiro/actual-server:sha-12f3782
           ports:
           - containerPort: 5006
           volumeMounts:
