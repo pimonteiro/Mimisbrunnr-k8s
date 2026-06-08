@@ -15,4 +15,4 @@ spec:
           namespace: planka-1
           port: 1337
   tls:
-    secretName: planka-tls-secret
+    secretName: planka-1-tls-secret
