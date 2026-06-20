@@ -51,6 +51,7 @@ spec:
       containers:
         - name: suwayomi
           image: ghcr.io/suwayomi/suwayomi-server:stable
+          imagePullPolicy: Always
           resources:
             requests:
               cpu: "300m"
