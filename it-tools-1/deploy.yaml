@@ -26,19 +26,19 @@ spec:
         tolerationSeconds: 30
       containers:
         - name: it-toolsy
-          image: corentinth/it-tools:latest
+          image: ghcr.io/sharevb/it-tools:stable
           ports:
-          - containerPort: 80
+          - containerPort: 8080
           livenessProbe:
             httpGet:
-              path: / # Or the specific health check path for Suwayomi
-              port: 80
-            initialDelaySeconds: 60 # Give it time to boot
+              path: /
+              port: 8080
+            initialDelaySeconds: 60
             periodSeconds: 15
           readinessProbe:
             httpGet:
               path: /
-              port: 80
+              port: 8080
             initialDelaySeconds: 30
             periodSeconds: 15
           resources:
@@ -60,4 +60,4 @@ spec:
     app: it-tools-1
   ports:
   - port: 80
-    targetPort: 80
+    targetPort: 8080
