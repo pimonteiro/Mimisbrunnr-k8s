@@ -90,7 +90,7 @@ spec:
           # Persistence for Nextcloud Data
           persistence:
             enabled: true
-            storageClass: "truenas-nfs"
+            storageClass: "truenas-iscsi"
             size: 100Gi
 
           # Resource limits for Nextcloud
