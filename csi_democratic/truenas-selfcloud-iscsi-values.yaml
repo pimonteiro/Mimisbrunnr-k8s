@@ -1,0 +1,16 @@
+csiDriver:
+  name: "org.democratic-csi.selfcloud-iscsi"
+
+storageClasses:
+- name: truenas-selfcloud-iscsi
+  defaultClass: false
+  reclaimPolicy: Delete
+  volumeBindingMode: Immediate
+  allowVolumeExpansion: true
+  parameters:
+    fsType: ext4
+
+driver:
+  config:
+    driver: freenas-api-iscsi
+  existingConfigSecret: truenas-selfcloud-iscsi-secret

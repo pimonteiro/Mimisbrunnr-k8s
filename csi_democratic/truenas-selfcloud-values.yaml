@@ -1,0 +1,16 @@
+csiDriver:
+  name: "org.democratic-csi.selfcloud-nfs"
+
+storageClasses:
+- name: truenas-selfcloud-nfs
+  defaultClass: false
+  reclaimPolicy: Delete
+  volumeBindingMode: Immediate
+  allowVolumeExpansion: true
+  parameters:
+    fsType: nfs
+
+driver:
+  config:
+    driver: freenas-api-nfs
+  existingConfigSecret: truenas-selfcloud-nfs-secret
