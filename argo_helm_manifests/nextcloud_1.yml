@@ -16,6 +16,23 @@ spec:
           ingress:
             enabled: false
 
+          # Probes configuration to handle initial NFS copy delay
+          startupProbe:
+            enabled: true
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 60 # 600 seconds = 10 minutes max for initial setup
+
+          livenessProbe:
+            enabled: true
+            initialDelaySeconds: 20
+            periodSeconds: 15
+
+          readinessProbe:
+            enabled: true
+            initialDelaySeconds: 20
+            periodSeconds: 15
+
           # Configure Nextcloud admin and general settings
           nextcloud:
             host: "drive.pimonlab.xyz"
