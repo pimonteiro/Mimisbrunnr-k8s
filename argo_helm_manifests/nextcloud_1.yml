@@ -77,7 +77,7 @@ spec:
             primary:
               persistence:
                 enabled: true
-                storageClass: "truenas-iscsi"
+                storageClass: "truenas-selfcloud-iscsi"
                 size: 5Gi
               resources:
                 requests:
@@ -90,7 +90,7 @@ spec:
           # Persistence for Nextcloud Data
           persistence:
             enabled: true
-            storageClass: "truenas-iscsi"
+            storageClass: "truenas-selfcloud-nfs"
             size: 100Gi
 
           # Resource limits for Nextcloud
