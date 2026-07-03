@@ -70,10 +70,9 @@ spec:
             global:
               postgresql:
                 auth:
-                  existingSecret: "nextcloud-1-secrets"
-                  secretKeys:
-                    adminPasswordKey: "db-admin-password"
-                    userPasswordKey: "db-password"
+                  username: "nextcloud"
+                  password: "ChangeThisPostgresUserPassword!"
+                  database: "nextcloud"
             primary:
               persistence:
                 enabled: true
@@ -90,7 +89,7 @@ spec:
           # Persistence for Nextcloud Data
           persistence:
             enabled: true
-            storageClass: "truenas-selfcloud-nfs"
+            storageClass: "truenas-selfcloud-iscsi"
             size: 100Gi
 
           # Resource limits for Nextcloud

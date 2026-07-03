@@ -13,6 +13,6 @@ spec:
       services:
         - name: nextcloud-1
           namespace: nextcloud-1
-          port: 80
+          port: 8080
   tls:
     secretName: nextcloud-1-ts-secret
