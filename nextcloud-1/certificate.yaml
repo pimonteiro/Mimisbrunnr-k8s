@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: nextcloud-1-tls-cert
+  namespace: nextcloud-1
+spec:
+  secretName: nextcloud-1-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "drive.pimonlab.xyz"
+  dnsNames:
+  - "drive.pimonlab.xyz"

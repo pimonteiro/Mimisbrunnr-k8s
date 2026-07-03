@@ -1,0 +1,99 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: nextcloud-1
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: 'https://nextcloud.github.io/helm/'
+      chart: nextcloud
+      targetRevision: 9.1.4
+      helm:
+        values: |
+          fullnameOverride: "nextcloud-1"
+          
+          ingress:
+            enabled: false
+
+          # Configure Nextcloud admin and general settings
+          nextcloud:
+            host: "drive.pimonlab.xyz"
+            # Use existing secret for admin user/password
+            existingSecret:
+              enabled: true
+              secretName: "nextcloud-1-secrets"
+              usernameKey: "nextcloud-username"
+              passwordKey: "nextcloud-password"
+            
+            # Custom PHP config for Traefik reverse proxy support
+            configs:
+              custom.config.php: |-
+                <?php
+                $CONFIG = array (
+                  'trusted_domains' => array (
+                    0 => 'drive.pimonlab.xyz',
+                  ),
+                  'overwritehost' => 'drive.pimonlab.xyz',
+                  'overwriteprotocol' => 'https',
+                  'trusted_proxies' => array(
+                    0 => '10.0.0.0/8',
+                    1 => '172.16.0.0/12',
+                    2 => '192.168.0.0/16',
+                  ),
+                );
+
+          # Disable SQLite
+          internalDatabase:
+            enabled: false
+
+          # Deploy PostgreSQL sub-chart
+          postgresql:
+            enabled: true
+            global:
+              postgresql:
+                auth:
+                  existingSecret: "nextcloud-1-secrets"
+                  secretKeys:
+                    adminPasswordKey: "db-admin-password"
+                    userPasswordKey: "db-password"
+            primary:
+              persistence:
+                enabled: true
+                storageClass: "truenas-iscsi"
+                size: 5Gi
+              resources:
+                requests:
+                  cpu: "250m"
+                  memory: "512Mi"
+                limits:
+                  cpu: "1"
+                  memory: "1Gi"
+
+          # Persistence for Nextcloud Data
+          persistence:
+            enabled: true
+            storageClass: "truenas-nfs"
+            size: 100Gi
+
+          # Resource limits for Nextcloud
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "2"
+              memory: "2Gi"
+
+    - repoURL: 'https://github.com/pimonteiro/Mimisbrunnr-k8s.git'
+      targetRevision: HEAD
+      path: nextcloud-1
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: nextcloud-1
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

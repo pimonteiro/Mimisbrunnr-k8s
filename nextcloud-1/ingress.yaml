@@ -1,0 +1,18 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: nextcloud-1
+  namespace: nextcloud-1
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - kind: Rule
+      match: Host(`drive.pimonlab.xyz`)
+      priority: 10
+      services:
+        - name: nextcloud-1
+          namespace: nextcloud-1
+          port: 80
+  tls:
+    secretName: nextcloud-1-ts-secret
