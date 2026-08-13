@@ -8,7 +8,7 @@ spec:
   sources:
     - repoURL: https://plankanban.github.io/planka
       chart: planka
-      targetRevision: 2.0.3
+      targetRevision: 2.2.0
       helm:
         values: |
           replicaCount: 1
