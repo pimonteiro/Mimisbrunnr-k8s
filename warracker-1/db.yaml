@@ -5,6 +5,8 @@ metadata:
   namespace: warracker-1
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: warracker-1-db

@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lingarr-svc
+  namespace: external-services
+spec:
+  ports:
+    - name: web
+      port: 9876
+      targetPort: 9876
+  selector:
+    app: lingarr-proxy
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lingarr-proxy
+  namespace: external-services
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lingarr-proxy
+  template:
+    metadata:
+      labels:
+        app: lingarr-proxy
+    spec:
+      containers:
+      - name: socat
+        image: alpine/socat
+        args: ["TCP-LISTEN:9876,fork", "TCP:192.168.7.40:9876"]
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "25Mi"
+          limits:
+            memory: "50Mi"
+        ports:
+        - containerPort: 9876
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: lingarr-tls-cert
+  namespace: external-services
+spec:
+  secretName: lingarr-ts-secret
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: "lingarr.pimonlab.xyz"
+  dnsNames:
+  - "lingarr.pimonlab.xyz"
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: lingarr-ingress
+  namespace: external-services
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`lingarr.pimonlab.xyz`)
+      kind: Rule
+      services:
+        - name: lingarr-svc
+          port: 9876
+  tls:
+    secretName: lingarr-ts-secret
